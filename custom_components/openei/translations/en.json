@@ -1,0 +1,59 @@
+{
+    "config": {
+        "title": "OpenEI",
+        "step": {
+            "user": {
+                "title": "OpenEI (Step 1)",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "data": {
+                    "api_key": "API Key"
+                }
+            },
+            "config_2": {
+                "title": "OpenEI (Step 2)",
+                "description": "Select your utility company.",
+                "data": {
+                    "utility": "Utility Company"
+                }
+            },
+            "config_3": {
+                "title": "OpenEI (Step 3)",
+                "description": "Select your plan from the list. If you are unsure, check your utility bill.",
+                "data": {
+                    "rate_plan": "Rate Plan"
+                }
+            }                        
+        },
+        "error": {
+            "auth": "Username/Password is wrong."
+        },
+        "abort": {
+            "single_instance_allowed": "Only a single configuration of Blueprint is allowed."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "title": "OpenEI (Step 1)",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "data": {
+                    "api_key": "API Key"
+                }
+            },
+            "config_2": {
+                "title": "OpenEI (Step 2)",
+                "description": "Select your utility company.",
+                "data": {
+                    "utility": "Utility Company"
+                }
+            },
+            "config_3": {
+                "title": "OpenEI (Step 3)",
+                "description": "Select your plan from the list. If you are unsure, check your utility bill.",
+                "data": {
+                    "rate_plan": "Rate Plan"
+                }
+            }  
+        }
+    }
+}

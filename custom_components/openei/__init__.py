@@ -1,30 +1,24 @@
-"""
-Custom integration to integrate integration_blueprint with Home Assistant.
-
-For more details about this integration, please refer to
-https://github.com/custom-components/integration_blueprint
-"""
+"""Custom integration to integrate OpenEI with Home Assistant."""
 import asyncio
 from datetime import timedelta
 import logging
+import openei
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import IntegrationBlueprintApiClient
-
 from .const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_API_KEY,
+    CONF_PLAN,
     DOMAIN,
     PLATFORMS,
+    SENSOR_TYPES,
     STARTUP_MESSAGE,
 )
 
-SCAN_INTERVAL = timedelta(seconds=30)
+SCAN_INTERVAL = timedelta(minutes=30)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -40,13 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
-
-    session = async_get_clientsession(hass)
-    client = IntegrationBlueprintApiClient(username, password, session)
-
-    coordinator = BlueprintDataUpdateCoordinator(hass, client=client)
+    coordinator = OpenEIDataUpdateCoordinator(hass, config=entry)
     await coordinator.async_refresh()
 
     if not coordinator.last_update_success:
@@ -65,24 +53,44 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
+class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(
-        self, hass: HomeAssistant, client: IntegrationBlueprintApiClient
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, config: ConfigEntry) -> None:
         """Initialize."""
-        self.api = client
-        self.platforms = []
+        self._config = config
+        self.hass = hass
+        self.data = None
+
+        _LOGGER.debug("Data will be update every %s", SCAN_INTERVAL)
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
 
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.api.async_get_data()
+            data = await self.hass.async_add_executor_job(
+                get_sensors, self.hass, self._config
+            )
         except Exception as exception:
             raise UpdateFailed() from exception
+        return data
+
+
+def get_sensors(hass, config):
+    api = config.data.get(CONF_API_KEY)
+    lat = hass.config.latitude
+    lon = hass.config.longitude
+    plan = config.data.get(CONF_PLAN)
+    rate = openei.Rates(api, lat, lon, plan)
+    data = {}
+
+    for sensor in SENSOR_TYPES:
+        _sensor = {}
+        _sensor[sensor] = getattr(rate, sensor)
+        data.update(_sensor)
+    _LOGGER.debug("DEBUG: %s", data)
+    return data
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
