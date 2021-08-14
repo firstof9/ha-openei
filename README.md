@@ -11,7 +11,7 @@
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with [integration_blueprint][integration_blueprint]._
+_Component to integrate with [OpenEI.org][openei]._
 
 **This component will set up the following platforms.**
 
@@ -39,7 +39,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ***
 
-[integration_blueprint]: https://github.com/firstof9/ha-openei
+[openei]: https://openei.org/
 [buymecoffee]: https://www.buymeacoffee.com/firstof9
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/firstof9/ha-openei.svg?style=for-the-badge
