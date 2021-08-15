@@ -1,22 +1,11 @@
 """Tests for init."""
+import pytest
 from tests.const import CONFIG_DATA
+from unittest.mock import patch
 from custom_components.openei.const import DOMAIN
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
-
-from custom_components.openei import get_sensors
-
-
-async def test_get_sensors(hass, mock_api):
-    """Test get_sensors function."""
-    entry = MockConfigEntry(
-        domain=DOMAIN,
-        title="Fake Utility Co.",
-        data=CONFIG_DATA,
-    )
-
-    result = get_sensors(hass, entry)
-    assert result == {}
+from homeassistant.exceptions import ConfigEntryNotReady
 
 
 async def test_setup_entry(hass, mock_sensors, mock_api):

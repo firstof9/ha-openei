@@ -1,6 +1,7 @@
 """Sensor platform for integration_blueprint."""
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from typing import Optional
 
@@ -17,10 +18,10 @@ async def async_setup_entry(hass, entry, async_add_devices):
     async_add_devices(sensors, False)
 
 
-class OpenEISensor(CoordinatorEntity):
+class OpenEISensor(CoordinatorEntity, SensorEntity):
     """OpenEI Sensor class."""
 
-    def __init__(self, sensor_type, unique_id, coordinator):
+    def __init__(self, sensor_type, unique_id, coordinator) -> None:
         """Initialize the sensor."""
         self._name = sensor_type
         self._unique_id = unique_id
@@ -42,7 +43,7 @@ class OpenEISensor(CoordinatorEntity):
         return self.coordinator.data.get(self._name)
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Return the icon of the sensor."""
         return SENSOR_TYPES[self._name][1]
 
@@ -57,7 +58,7 @@ class OpenEISensor(CoordinatorEntity):
         return self.coordinator.last_update_success
 
     @property
-    def device_state_attributes(self):
+    def device_state_attributes(self) -> Optional[str]:
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
