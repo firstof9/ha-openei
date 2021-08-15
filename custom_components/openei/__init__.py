@@ -2,7 +2,7 @@
 import asyncio
 from datetime import timedelta
 import logging
-import openei
+import openeihttp
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
@@ -43,11 +43,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     for platform in PLATFORMS:
-        if entry.options.get(platform, True):
-            coordinator.platforms.append(platform)
-            hass.async_add_job(
-                hass.config_entries.async_forward_entry_setup(entry, platform)
-            )
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(entry, platform)
+        )
 
     entry.add_update_listener(async_reload_entry)
     return True
@@ -69,12 +67,11 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            data = await self.hass.async_add_executor_job(
+            return await self.hass.async_add_executor_job(
                 get_sensors, self.hass, self._config
             )
         except Exception as exception:
             raise UpdateFailed() from exception
-        return data
 
 
 def get_sensors(hass, config):
@@ -82,7 +79,8 @@ def get_sensors(hass, config):
     lat = hass.config.latitude
     lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
-    rate = openei.Rates(api, lat, lon, plan)
+    rate = openeihttp.Rates(api, lat, lon, plan)
+    rate.update()
     data = {}
 
     for sensor in SENSOR_TYPES:
@@ -95,13 +93,11 @@ def get_sensors(hass, config):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
     unloaded = all(
         await asyncio.gather(
             *[
                 hass.config_entries.async_forward_entry_unload(entry, platform)
                 for platform in PLATFORMS
-                if platform in coordinator.platforms
             ]
         )
     )

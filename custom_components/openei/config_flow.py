@@ -3,7 +3,7 @@ from __future__ import annotations
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
 import voluptuous as vol
-import openei
+import openeihttp
 import logging
 from typing import Any, Dict, Optional
 from homeassistant.helpers import config_validation as cv
@@ -247,7 +247,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
     lon = hass.config.longitude
     api = user_input[CONF_API_KEY]
 
-    plans = openei.Rates(api, lat, lon)
+    plans = openeihttp.Rates(api, lat, lon)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     utilities = []
 
@@ -266,7 +266,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
     api = user_input[CONF_API_KEY]
     utility = user_input[CONF_UTILITY]
 
-    plans = openei.Rates(api, lat, lon)
+    plans = openeihttp.Rates(api, lat, lon)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     value = {}
 

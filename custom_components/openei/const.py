@@ -16,13 +16,6 @@ ICON = "mdi:format-quote-close"
 # Device classes
 BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 
-# Platforms
-BINARY_SENSOR = "binary_sensor"
-SENSOR = "sensor"
-SWITCH = "switch"
-PLATFORMS = [BINARY_SENSOR, SENSOR, SWITCH]
-
-
 # Configuration and options
 CONF_API_KEY = "api_key"
 CONF_PLAN = "rate_plan"

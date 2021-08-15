@@ -1,7 +1,7 @@
 """Sensor platform for integration_blueprint."""
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 from homeassistant.const import ATTR_ATTRIBUTION
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from typing import Optional
 
 
@@ -17,14 +17,14 @@ async def async_setup_entry(hass, entry, async_add_devices):
     async_add_devices(sensors, False)
 
 
-class OpenEISensor(DataUpdateCoordinator):
+class OpenEISensor(CoordinatorEntity):
     """OpenEI Sensor class."""
 
     def __init__(self, sensor_type, unique_id, coordinator):
         """Initialize the sensor."""
         self._name = sensor_type
         self._unique_id = unique_id
-        self._coordinator = coordinator
+        self.coordinator = coordinator
 
     @property
     def unique_id(self) -> str:
@@ -39,7 +39,7 @@ class OpenEISensor(DataUpdateCoordinator):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._coordinator.data.get(self._name)
+        return self.coordinator.data.get(self._name)
 
     @property
     def icon(self):
@@ -54,7 +54,7 @@ class OpenEISensor(DataUpdateCoordinator):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._coordinator.last_update_success
+        return self.coordinator.last_update_success
 
     @property
     def device_state_attributes(self):
