@@ -17,14 +17,11 @@ def mock_api():
     """Mock the library calls."""
     with patch("custom_components.openei.openeihttp") as mock_api:
         mock_conn = mock.Mock(spec=openeihttp.Rates)
-        # mock_api.Rates().return_value = mock_conn
-
         mock_conn.return_value.current_rate.return_value = 0.24477
         mock_conn.return_value.distributed_generation.return_value = "Net Metering"
         mock_conn.return_value.approval.return_value = True
         mock_conn.return_value.rate_name.return_value = 0.24477
 
-        # mock_conn.return_value = load_fixture("plan_data.json")
         yield mock_conn
 
 

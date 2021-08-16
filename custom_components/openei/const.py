@@ -8,7 +8,7 @@ DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
 ATTRIBUTION = "Data provided by http://openei.org/"
 ISSUE_URL = "https://github.com/firstof9/ha-openei/issues"
-PLATFORMS = ["sensor"]
+PLATFORMS = ["binary_sensor", "sensor"]
 
 # Icons
 ICON = "mdi:format-quote-close"
@@ -38,6 +38,9 @@ If you have any issues with this you need to open an issue here:
 SENSOR_TYPES = {
     "current_rate": ["Current Energy Rate", "mdi:currency-usd", CURRENCY_DOLLAR],
     "distributed_generation": ["Distributed Generation", "mdi:gauge", None],
-    "approval": ["Approval", "mdi:check", None],
     "rate_name": ["Plan Name", "mdi:tag", None],
+}
+
+BINARY_SENSORS = {
+    "approval": ["Approval", "mdi:check", None],
 }
