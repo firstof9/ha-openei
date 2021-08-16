@@ -4,7 +4,6 @@ from unittest.mock import patch
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from openeihttp import APIError
-import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN

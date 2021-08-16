@@ -4,7 +4,6 @@ from unittest.mock import patch
 import openeihttp
 import pytest
 
-from tests.common import load_fixture
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 

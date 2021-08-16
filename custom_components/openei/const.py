@@ -1,12 +1,12 @@
 """Constants for integration_blueprint."""
-from homeassistant.const import CURRENCY_DOLLAR
+from homeassistant.const import CURRENCY_DOLLAR, DEVICE_CLASS_MONETARY
 
 # Base component constants
 NAME = "OpenEI"
 DOMAIN = "openei"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
-ATTRIBUTION = "Data provided by http://openei.org/"
+ATTRIBUTION = "Data provided by OpenEI.org"
 ISSUE_URL = "https://github.com/firstof9/ha-openei/issues"
 PLATFORMS = ["binary_sensor", "sensor"]
 
@@ -34,13 +34,18 @@ If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
-# property: name, icon, unit_of_measurement
+# property: name, icon, unit_of_measurement, device_class
 SENSOR_TYPES = {
-    "current_rate": ["Current Energy Rate", "mdi:currency-usd", CURRENCY_DOLLAR],
-    "distributed_generation": ["Distributed Generation", "mdi:gauge", None],
-    "rate_name": ["Plan Name", "mdi:tag", None],
+    "current_rate": [
+        "Current Energy Rate",
+        "mdi:currency-usd",
+        CURRENCY_DOLLAR,
+        DEVICE_CLASS_MONETARY,
+    ],
+    "distributed_generation": ["Distributed Generation", "mdi:gauge", None, None],
+    "rate_name": ["Plan Name", "mdi:tag", None, None],
 }
 
 BINARY_SENSORS = {
-    "approval": ["Approval", "mdi:check", None],
+    "approval": ["Approval", "mdi:check", None, None],
 }

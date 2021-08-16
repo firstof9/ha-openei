@@ -28,6 +28,9 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         self._name = sensor_type
         self._unique_id = unique_id
         self.coordinator = coordinator
+        self._attr_state = coordinator.data.get(sensor_type)
+        self._attr_unit_of_measurement = SENSOR_TYPES[self._name][2]
+        self._device_class = SENSOR_TYPES[self._name][3]
 
     @property
     def unique_id(self) -> str:
@@ -40,19 +43,9 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         return f"{SENSOR_TYPES[self._name][0]}"
 
     @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self.coordinator.data.get(self._name)
-
-    @property
     def icon(self) -> str:
         """Return the icon of the sensor."""
         return SENSOR_TYPES[self._name][1]
-
-    @property
-    def unit_of_measurement(self) -> Optional[str]:
-        """Return the unit of measurement of this sensor."""
-        return SENSOR_TYPES[self._name][2]
 
     @property
     def available(self) -> bool:
@@ -60,8 +53,13 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         return self.coordinator.last_update_success
 
     @property
-    def device_state_attributes(self) -> Optional[str]:
+    def device_state_attributes(self) -> Optional[dict]:
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
         return attrs
+
+    @property
+    def device_class(self):
+        """Return the device class of the sensor."""
+        return self._device_class

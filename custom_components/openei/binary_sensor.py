@@ -25,6 +25,7 @@ class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._name = sensor_type
         self._config = entry
         self.coordinator = coordinator
+        self._attr_is_on = coordinator.data.get(sensor_type)
 
     @property
     def unique_id(self):
@@ -35,8 +36,3 @@ class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def name(self):
         """Return the name of the binary_sensor."""
         return f"{BINARY_SENSORS[self._name][0]}"
-
-    @property
-    def is_on(self):
-        """Return true if the binary_sensor is on."""
-        return self.coordinator.data.get(self._name)
