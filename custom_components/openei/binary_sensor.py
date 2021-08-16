@@ -2,10 +2,7 @@
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import (
-    BINARY_SENSORS,
-    DOMAIN,
-)
+from .const import BINARY_SENSORS, DOMAIN
 
 
 async def async_setup_entry(hass, entry, async_add_devices):

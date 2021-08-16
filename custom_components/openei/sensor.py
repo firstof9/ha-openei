@@ -1,9 +1,11 @@
 """Sensor platform for integration_blueprint."""
-from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
-from homeassistant.const import ATTR_ATTRIBUTION
-from homeassistant.components.sensor import SensorEntity
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from typing import Optional
+
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 
 
 async def async_setup_entry(hass, entry, async_add_devices):

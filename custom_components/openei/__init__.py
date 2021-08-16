@@ -2,12 +2,12 @@
 import asyncio
 from datetime import timedelta
 import logging
-import openeihttp
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+import openeihttp
 
 from .const import (
     CONF_API_KEY,
