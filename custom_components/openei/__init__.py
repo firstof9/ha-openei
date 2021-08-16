@@ -10,6 +10,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 import openeihttp
 
 from .const import (
+    BINARY_SENSORS,
     CONF_API_KEY,
     CONF_PLAN,
     DOMAIN,
@@ -87,6 +88,12 @@ def get_sensors(hass, config):
         _sensor = {}
         _sensor[sensor] = getattr(rate, sensor)
         data.update(_sensor)
+
+    for sensor in BINARY_SENSORS:
+        _sensor = {}
+        _sensor[sensor] = getattr(rate, sensor)
+        data.update(_sensor)
+
     _LOGGER.debug("DEBUG: %s", data)
     return data
 
