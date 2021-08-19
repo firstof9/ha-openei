@@ -31,13 +31,16 @@ Platform | Description
 
 ## Configuration is done in the UI
 
-Step 1: Enter your API Key
+Step 1: Enter your API Key:
+
 ![step1][step1img]
 
 Step 2: Select your utility company:
+
 ![step2][step2img]
 
 Step 3.1: Select your rate plan:
+
 ![step3.1][step3-1img]
 ![step3.2][step3-2img]
 
