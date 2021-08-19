@@ -1,6 +1,5 @@
 {
     "config": {
-        "title": "OpenEI",
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
@@ -9,14 +8,14 @@
                     "api_key": "API Key"
                 }
             },
-            "config_2": {
+            "user_2": {
                 "title": "OpenEI (Step 2)",
                 "description": "Select your utility company.",
                 "data": {
                     "utility": "Utility Company"
                 }
             },
-            "config_3": {
+            "user_3": {
                 "title": "OpenEI (Step 3)",
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {
@@ -40,14 +39,14 @@
                     "api_key": "API Key"
                 }
             },
-            "config_2": {
+            "user_2": {
                 "title": "OpenEI (Step 2)",
                 "description": "Select your utility company.",
                 "data": {
                     "utility": "Utility Company"
                 }
             },
-            "config_3": {
+            "user_3": {
                 "title": "OpenEI (Step 3)",
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {

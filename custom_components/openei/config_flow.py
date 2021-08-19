@@ -101,7 +101,8 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry):
         """Initialize HACS options flow."""
         self.config_entry = config_entry
-        self._data = dict(config_entry.options)
+        self._data = dict(config_entry.data)
+        self._errors = {}
 
     async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
         """Manage the options."""
@@ -117,7 +118,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_user_2(self, user_input=None):
         """Handle a flow initialized by the user."""
-        self._errors = {}
 
         if user_input is not None:
             self._data.update(user_input)
@@ -127,7 +127,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_user_3(self, user_input=None):
         """Handle a flow initialized by the user."""
-        self._errors = {}
 
         if user_input is not None:
             self._data.update(user_input)
@@ -139,7 +138,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema_step_1(self.hass, user_input, self._data),
+            data_schema=_get_schema_step_1(self.hass, self._data, self._data),
             errors=self._errors,
         )
 
@@ -149,7 +148,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="user_2",
             data_schema=_get_schema_step_2(
-                self.hass, user_input, self._data, utility_list
+                self.hass, self._data, self._data, utility_list
             ),
             errors=self._errors,
         )
@@ -160,7 +159,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="user_3",
             data_schema=_get_schema_step_3(
-                self.hass, user_input, self._data, plan_list
+                self.hass, self._data, self._data, plan_list
             ),
             errors=self._errors,
         )
