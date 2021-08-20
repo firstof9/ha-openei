@@ -1,11 +1,12 @@
 """Custom integration to integrate OpenEI with Home Assistant."""
 import asyncio
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 import openeihttp
 
@@ -61,12 +62,19 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         self.hass = hass
         self.data = None
 
-        _LOGGER.debug("Data will be update every %s", SCAN_INTERVAL)
+        _LOGGER.debug("Data will be updated at the top of every hour.")
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
+        super().__init__(hass, _LOGGER, name=DOMAIN)
 
-    async def _async_update_data(self):
+    async def _async_update_data(self, data=None) -> None:
         """Update data via library."""
+        delta = timedelta(hours=1)
+        now = datetime.now()
+        next_hour = (now + delta).replace(microsecond=0, second=0, minute=2)
+        wait_seconds = (next_hour - now).seconds
+
+        _LOGGER.debug("Next update in %s seconds.", wait_seconds)
+        async_call_later(self.hass, wait_seconds, self._async_update_data)
         try:
             return await self.hass.async_add_executor_job(
                 get_sensors, self.hass, self._config
