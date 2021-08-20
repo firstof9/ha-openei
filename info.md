@@ -30,6 +30,20 @@ Platform | Description
 
 ## Configuration is done in the UI
 
+
+Step 1: Enter your API Key:
+
+![step1][step1img]
+
+Step 2: Select your utility company:
+
+![step2][step2img]
+
+Step 3.1: Select your rate plan:
+
+![step3.1][step3-1img]
+![step3.2][step3-2img]
+
 <!---->
 
 ***
@@ -43,10 +57,13 @@ Platform | Description
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [discord]: https://discord.gg/Qa5fW2R
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
-[exampleimg]: example.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/firstof9/ha-openei.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Chris%20Nowak%20%40firstof9-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/firstof9/ha-openei.svg?style=for-the-badge
 [releases]: https://github.com/firstof9/ha-openei/releases
+[step1img]: images/step1.png
+[step2img]: images/step2.png
+[step3-1img]: images/step3-1.png
+[step3-2img]: images/step3-2.png
