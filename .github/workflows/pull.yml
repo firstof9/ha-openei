@@ -15,6 +15,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "integration"
+          ignore: "brands wheels"
 
       - name: Hassfest validation
         uses: "home-assistant/actions/hassfest@master"
