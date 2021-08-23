@@ -25,6 +25,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
 
     def __init__(self, sensor_type, unique_id, coordinator) -> None:
         """Initialize the sensor."""
+        super().__init__(coordinator)
         self._name = sensor_type
         self._unique_id = unique_id
         self.coordinator = coordinator

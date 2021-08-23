@@ -70,7 +70,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         """Update data via library."""
         delta = timedelta(hours=1)
         now = datetime.now()
-        next_hour = (now + delta).replace(microsecond=0, second=0, minute=2)
+        next_hour = (now + delta).replace(microsecond=0, second=1, minute=0)
         wait_seconds = (next_hour - now).seconds
 
         _LOGGER.debug("Next update in %s seconds.", wait_seconds)
