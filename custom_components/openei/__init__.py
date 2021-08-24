@@ -60,13 +60,32 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         """Initialize."""
         self._config = config
         self.hass = hass
-        self.data = None
+        self.interval = timedelta(seconds=30)
+        self._data = {}
 
         _LOGGER.debug("Data will be updated at the top of every hour.")
 
-        super().__init__(hass, _LOGGER, name=DOMAIN)
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=self.interval)
 
-    async def _async_update_data(self, data=None) -> None:
+    async def _async_update_data(self) -> dict:
+        """Update data via library."""
+        if len(self._data) == 0:
+            delta = timedelta(hours=1)
+            now = datetime.now()
+            next_hour = (now + delta).replace(microsecond=0, second=1, minute=0)
+            wait_seconds = (next_hour - now).seconds
+
+            _LOGGER.debug("Next update in %s seconds.", wait_seconds)
+            async_call_later(self.hass, wait_seconds, self._async_refresh_data)
+            try:
+                self._data = await self.hass.async_add_executor_job(
+                    get_sensors, self.hass, self._config
+                )
+            except Exception as exception:
+                raise UpdateFailed() from exception
+        return self._data
+
+    async def _async_refresh_data(self, data=None) -> None:
         """Update data via library."""
         delta = timedelta(hours=1)
         now = datetime.now()
@@ -74,9 +93,9 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         wait_seconds = (next_hour - now).seconds
 
         _LOGGER.debug("Next update in %s seconds.", wait_seconds)
-        async_call_later(self.hass, wait_seconds, self._async_update_data)
+        async_call_later(self.hass, wait_seconds, self._async_refresh_data)
         try:
-            return await self.hass.async_add_executor_job(
+            self._data = await self.hass.async_add_executor_job(
                 get_sensors, self.hass, self._config
             )
         except Exception as exception:
