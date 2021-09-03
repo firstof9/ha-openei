@@ -15,7 +15,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     sensors = []
     for sensor in SENSOR_TYPES:
-        sensors.append(OpenEISensor(sensor, unique_id, coordinator))
+        sensors.append(OpenEISensor(hass, sensor, unique_id, coordinator))
 
     async_add_devices(sensors, False)
 
@@ -23,13 +23,14 @@ async def async_setup_entry(hass, entry, async_add_devices):
 class OpenEISensor(CoordinatorEntity, SensorEntity):
     """OpenEI Sensor class."""
 
-    def __init__(self, sensor_type, unique_id, coordinator) -> None:
+    def __init__(self, hass, sensor_type, unique_id, coordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
+        self.hass = hass
         self._name = sensor_type
         self._unique_id = unique_id
         self.coordinator = coordinator
-        self._attr_native_unit_of_measurement = f"{SENSOR_TYPES[self._name][2]}/kWh"
+        self._attr_native_unit_of_measurement = f"{self.hass.config.currency}/kWh"
         self._device_class = SENSOR_TYPES[self._name][3]
         self._attr_native_value = self.coordinator.data.get(self._name)
 
