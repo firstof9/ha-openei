@@ -29,8 +29,9 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         self._name = sensor_type
         self._unique_id = unique_id
         self.coordinator = coordinator
-        self._attr_unit_of_measurement = SENSOR_TYPES[self._name][2]
+        self._attr_native_unit_of_measurement = f"{SENSOR_TYPES[self._name][2]}/kWh"
         self._device_class = SENSOR_TYPES[self._name][3]
+        self._attr_native_value = self.coordinator.data.get(self._name)
 
     @property
     def unique_id(self) -> str:
@@ -41,11 +42,6 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     def name(self):
         """Return the name of the sensor."""
         return f"{SENSOR_TYPES[self._name][0]}"
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self.coordinator.data.get(self._name)
 
     @property
     def icon(self) -> str:
