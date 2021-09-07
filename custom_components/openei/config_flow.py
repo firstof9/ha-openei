@@ -262,9 +262,10 @@ async def _get_plan_list(hass, user_input) -> list | None:
     lat = hass.config.latitude
     lon = hass.config.longitude
     api = user_input[CONF_API_KEY]
+    radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
 
-    plans = openeihttp.Rates(api, lat, lon)
+    plans = openeihttp.Rates(api, lat, lon, radius=radius)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     value = {}
 
