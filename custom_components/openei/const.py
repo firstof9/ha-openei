@@ -44,6 +44,7 @@ SENSOR_TYPES = {
     ],
     "distributed_generation": ["Distributed Generation", "mdi:gauge", None, None],
     "rate_name": ["Plan Name", "mdi:tag", None, None],
+    "all_rates": ["All Listed Rates", "mdi:format-list-bulleted", None, None],
 }
 
 BINARY_SENSORS = {
