@@ -10,7 +10,7 @@ from homeassistant.helpers import config_validation as cv
 import openeihttp
 import voluptuous as vol
 
-from .const import CONF_API_KEY, CONF_PLAN, CONF_UTILITY, DOMAIN
+from .const import CONF_API_KEY, CONF_PLAN, CONF_RADIUS, CONF_UTILITY, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -184,6 +184,7 @@ def _get_schema_step_1(
             vol.Required(
                 CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
             ): cv.string,
+            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.float,
         },
     )
 
