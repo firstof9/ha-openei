@@ -14,6 +14,7 @@ from .const import (
     BINARY_SENSORS,
     CONF_API_KEY,
     CONF_PLAN,
+    CONF_RADIUS,
     DOMAIN,
     PLATFORMS,
     SENSOR_TYPES,
@@ -107,7 +108,8 @@ def get_sensors(hass, config):
     lat = hass.config.latitude
     lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
-    rate = openeihttp.Rates(api, lat, lon, plan)
+    radius = config.data.get(CONF_RADIUS)
+    rate = openeihttp.Rates(api, lat, lon, plan, radius)
     rate.update()
     data = {}
 
