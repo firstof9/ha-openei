@@ -184,7 +184,7 @@ def _get_schema_step_1(
             vol.Required(
                 CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
             ): cv.string,
-            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.float,
+            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
         },
     )
 
@@ -243,8 +243,9 @@ async def _get_utility_list(hass, user_input) -> list | None:
     lat = hass.config.latitude
     lon = hass.config.longitude
     api = user_input[CONF_API_KEY]
+    radius = user_input[CONF_RADIUS]
 
-    plans = openeihttp.Rates(api, lat, lon)
+    plans = openeihttp.Rates(api, lat, lon, radius=radius)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     utilities = []
 
