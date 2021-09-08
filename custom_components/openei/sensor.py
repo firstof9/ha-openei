@@ -4,6 +4,8 @@ from typing import Optional
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import slugify
+
 
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 
@@ -11,11 +13,10 @@ from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 async def async_setup_entry(hass, entry, async_add_devices):
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    unique_id = entry.entry_id
 
     sensors = []
     for sensor in SENSOR_TYPES:
-        sensors.append(OpenEISensor(hass, sensor, unique_id, coordinator))
+        sensors.append(OpenEISensor(hass, sensor, entry, coordinator))
 
     async_add_devices(sensors, False)
 
@@ -23,12 +24,13 @@ async def async_setup_entry(hass, entry, async_add_devices):
 class OpenEISensor(CoordinatorEntity, SensorEntity):
     """OpenEI Sensor class."""
 
-    def __init__(self, hass, sensor_type, unique_id, coordinator) -> None:
+    def __init__(self, hass, sensor_type, entry, coordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.hass = hass
         self._name = sensor_type
-        self._unique_id = unique_id
+        self._unique_id = entry.entry_id
+        self._config = entry
         self.coordinator = coordinator
         self._attr_native_unit_of_measurement = (
             f"{self.hass.config.currency}/kWh" if self._name == "current_rate" else None
@@ -44,7 +46,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{SENSOR_TYPES[self._name][0]}"
+        return f"{self._config.title}_{SENSOR_TYPES[self._name][0]}"
 
     @property
     def icon(self) -> str:

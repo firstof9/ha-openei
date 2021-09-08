@@ -193,9 +193,6 @@ def _get_schema_step_1(
                 CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
             ): cv.string,
             vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
-            vol.Optional(CONF_SENSOR, default=_get_default(CONF_SENSOR, "")): vol.In(
-                _get_entities(hass, SENSORS_DOMAIN, "energy")
-            ),
         },
     )
 
@@ -244,6 +241,9 @@ def _get_schema_step_3(
             vol.Required(CONF_PLAN, default=_get_default(CONF_PLAN, "")): vol.In(
                 plan_list
             ),
+            vol.Optional(
+                CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
+            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
         },
     )
 

@@ -15,6 +15,7 @@ from .const import (
     CONF_API_KEY,
     CONF_PLAN,
     CONF_RADIUS,
+    CONF_SENSOR,
     DOMAIN,
     PLATFORMS,
     SENSOR_TYPES,
@@ -36,6 +37,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
+
+    updated_config = entry.data.copy()
+
+    if entry.data.get(CONF_SENSOR) == "(none)":
+        updated_config[CONF_SENSOR] = None
+
+    if updated_config != entry.data:
+        hass.config_entries.async_update_entry(entry, data=updated_config)
 
     coordinator = OpenEIDataUpdateCoordinator(hass, config=entry)
     await coordinator.async_refresh()
@@ -109,7 +118,8 @@ def get_sensors(hass, config):
     lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
     radius = config.data.get(CONF_RADIUS)
-    rate = openeihttp.Rates(api, lat, lon, plan, radius)
+    readings = config.data.get(CONF_SENSOR)
+    rate = openeihttp.Rates(api, lat, lon, plan, radius, readings)
     rate.update()
     data = {}
 
