@@ -7,6 +7,6 @@
   "iot_class": "cloud_polling",
   "config_flow": true,
   "codeowners": ["@firstof9"],
-  "requirements": ["python-openei==0.1.6"],
-  "version": "0.0.7"
+  "requirements": ["python-openei==0.1.7"],
+  "version": "0.0.8"
 }
