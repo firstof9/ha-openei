@@ -2,15 +2,23 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from homeassistant import config_entries
+from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 import openeihttp
 import voluptuous as vol
 
-from .const import CONF_API_KEY, CONF_PLAN, CONF_RADIUS, CONF_UTILITY, DOMAIN
+from .const import (
+    CONF_API_KEY,
+    CONF_PLAN,
+    CONF_RADIUS,
+    CONF_SENSOR,
+    CONF_UTILITY,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -185,6 +193,9 @@ def _get_schema_step_1(
                 CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
             ): cv.string,
             vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
+            vol.Optional(CONF_SENSOR, default=_get_default(CONF_SENSOR, "")): vol.In(
+                _get_entities(hass, SENSORS_DOMAIN, "energy")
+            ),
         },
     )
 
@@ -281,3 +292,26 @@ def _lookup_plans(handler) -> list:
     response = handler.lookup_plans()
     _LOGGER.debug("lookup_plans: %s", response)
     return response
+
+
+def _get_entities(
+    hass: HomeAssistant,
+    domain: str,
+    search: List[str] = None,
+    extra_entities: List[str] = None,
+) -> List[str]:
+    data = []
+    if domain not in hass.data:
+        return data
+
+    for entity in hass.data[domain].entities:
+        if not hasattr(entity, "device_class"):
+            continue
+        elif search is not None and not entity.device_class == search:
+            continue
+        data.append(entity.entity_id)
+
+    if extra_entities:
+        data.extend(extra_entities)
+
+    return data

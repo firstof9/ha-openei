@@ -20,6 +20,7 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 CONF_API_KEY = "api_key"
 CONF_PLAN = "rate_plan"
 CONF_RADIUS = "radius"
+CONF_SENSOR = "sensor"
 CONF_UTILITY = "utility"
 
 # Defaults
