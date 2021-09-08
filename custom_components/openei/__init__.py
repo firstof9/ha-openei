@@ -122,7 +122,7 @@ def get_sensors(hass, config):
     readings = None
 
     if meter:
-        readings = meter.state
+        readings = hass.states.get(meter).state
 
     rate = openeihttp.Rates(api, lat, lon, plan, radius, readings)
     rate.update()
