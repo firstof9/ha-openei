@@ -1,5 +1,5 @@
 """Sensor platform for integration_blueprint."""
-from typing import Optional
+from typing import Any, Optional
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import ATTR_ATTRIBUTION
@@ -52,6 +52,11 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     def icon(self) -> str:
         """Return the icon of the sensor."""
         return SENSOR_TYPES[self._name][1]
+
+    @property
+    def native_value(self) -> Any:
+        """Return the value of the sensor."""
+        return self.coordinator.data.get(self._name)
 
     @property
     def available(self) -> bool:
