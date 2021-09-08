@@ -241,9 +241,9 @@ def _get_schema_step_3(
             vol.Required(CONF_PLAN, default=_get_default(CONF_PLAN, "")): vol.In(
                 plan_list
             ),
-            vol.Optional(
-                CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
-            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
+            vol.Optional(CONF_SENSOR, default=_get_default(CONF_SENSOR, "")): vol.In(
+                _get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])
+            ),
         },
     )
 
