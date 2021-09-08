@@ -118,7 +118,8 @@ def get_sensors(hass, config):
     lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
     radius = config.data.get(CONF_RADIUS)
-    readings = config.data.get(CONF_SENSOR)
+    meter = config.data.get(CONF_SENSOR)
+    readings = meter.state
     rate = openeihttp.Rates(api, lat, lon, plan, radius, readings)
     rate.update()
     data = {}
