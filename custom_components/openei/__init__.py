@@ -46,6 +46,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if updated_config != entry.data:
         hass.config_entries.async_update_entry(entry, data=updated_config)
 
+    entry.add_update_listener(update_listener)
+
     coordinator = OpenEIDataUpdateCoordinator(hass, config=entry)
     await coordinator.async_refresh()
 
@@ -59,7 +61,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             hass.config_entries.async_forward_entry_setup(entry, platform)
         )
 
-    entry.add_update_listener(async_reload_entry)
     return True
 
 
@@ -158,14 +159,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unloaded
 
 
-async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Reload config entry."""
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)
-
-
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Update listener."""
+
+    if not config_entry.options:
+        return
 
     _LOGGER.debug("Attempting to reload entities from the %s integration", DOMAIN)
 
@@ -178,6 +176,7 @@ async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> Non
     hass.config_entries.async_update_entry(
         entry=config_entry,
         data=new_data,
+        options={},
     )
 
     await hass.config_entries.async_reload(config_entry.entry_id)
