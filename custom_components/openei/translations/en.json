@@ -6,8 +6,7 @@
                 "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
                 "data": {
                     "api_key": "API Key",
-                    "radius": "Radius in miles (optional)",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "radius": "Radius in miles (optional)"
                 }
             },
             "user_2": {
@@ -21,7 +20,8 @@
                 "title": "OpenEI (Step 3)",
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {
-                    "rate_plan": "Rate Plan"
+                    "rate_plan": "Rate Plan",
+                    "sensor": "Energy sensor for Tier plans (optional)"
                 }
             }                        
         },
@@ -39,8 +39,7 @@
                 "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
                 "data": {
                     "api_key": "API Key",
-                    "radius": "Radius in miles (optional)",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "radius": "Radius in miles (optional)"
                 }
             },
             "user_2": {
@@ -54,7 +53,8 @@
                 "title": "OpenEI (Step 3)",
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {
-                    "rate_plan": "Rate Plan"
+                    "rate_plan": "Rate Plan",
+                    "sensor": "Energy sensor for Tier plans (optional)"
                 }
             }  
         }
