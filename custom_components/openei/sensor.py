@@ -46,7 +46,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._config.title}_{SENSOR_TYPES[self._name][0]}"
+        return f"{slugify(self._config.title)}_{SENSOR_TYPES[self._name][0]}"
 
     @property
     def icon(self) -> str:
