@@ -33,7 +33,9 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         self._config = entry
         self.coordinator = coordinator
         self._attr_native_unit_of_measurement = (
-            f"{self.hass.config.currency}/kWh" if self._name == "current_rate" else None
+            f"{self.hass.config.currency}/kWh"
+            if self._name in ["current_rate", "monthly_tier_rate"]
+            else None
         )
         self._device_class = SENSOR_TYPES[self._name][3]
         self._attr_native_value = self.coordinator.data.get(self._name)
