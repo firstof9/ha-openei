@@ -16,7 +16,9 @@ def auto_enable_custom_integrations(enable_custom_integrations):
 @pytest.fixture(name="mock_api")
 def mock_api():
     """Mock the library calls."""
-    with patch("custom_components.openei.openeihttp") as mock_api:
+    with patch("custom_components.openei.openeihttp"), patch(
+        "custom_components.openei.config_flow.openeihttp"
+    ):
         mock_conn = mock.Mock(spec=openeihttp.Rates)
         mock_conn.return_value.current_rate.return_value = 0.24477
         mock_conn.return_value.distributed_generation.return_value = "Net Metering"
