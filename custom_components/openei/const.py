@@ -5,7 +5,7 @@ from homeassistant.const import CURRENCY_DOLLAR, DEVICE_CLASS_MONETARY
 NAME = "OpenEI"
 DOMAIN = "openei"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.1"
+VERSION = "0.0.0-dev"
 ATTRIBUTION = "Data provided by OpenEI.org"
 ISSUE_URL = "https://github.com/firstof9/ha-openei/issues"
 PLATFORMS = ["binary_sensor", "sensor"]
