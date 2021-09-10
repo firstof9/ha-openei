@@ -41,12 +41,18 @@ SENSOR_TYPES = {
     "current_rate": [
         "Current Energy Rate",
         "mdi:currency-usd",
-        CURRENCY_DOLLAR,
+        None,
         DEVICE_CLASS_MONETARY,
     ],
     "distributed_generation": ["Distributed Generation", "mdi:gauge", None, None],
     "rate_name": ["Plan Name", "mdi:tag", None, None],
     "all_rates": ["All Listed Rates", "mdi:format-list-bulleted", None, None],
+    "monthly_tier_rate": [
+        "Monthly Energy Rate",
+        "mdi:currency-usd",
+        None,
+        DEVICE_CLASS_MONETARY,
+    ],
 }
 
 BINARY_SENSORS = {
