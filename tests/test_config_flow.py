@@ -15,6 +15,7 @@ from custom_components.openei.const import DOMAIN
             {
                 "api_key": "fakeAPIKey",
                 "radius": "",
+                "location": "",
             },
             "user_2",
             {
@@ -32,6 +33,7 @@ from custom_components.openei.const import DOMAIN
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
+                "location": "",
             },
         ),
     ],
@@ -103,6 +105,7 @@ async def test_form(
             {
                 "api_key": "fakeAPIKey_new",
                 "radius": "20",
+                "location": "",
             },
             "user_2",
             {
@@ -120,6 +123,7 @@ async def test_form(
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
+                "location": "",
             },
         ),
     ],
@@ -142,6 +146,7 @@ async def test_options_flow(
         data={
             "api_key": "fakeAPIKey",
             "radius": "",
+            "location": "",
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",
@@ -205,6 +210,7 @@ async def test_options_flow(
             {
                 "api_key": "fakeAPIKey",
                 "radius": "",
+                "location": "",
             },
             "user_2",
             {
@@ -222,6 +228,7 @@ async def test_options_flow(
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
+                "location": "",
             },
         ),
     ],
@@ -245,6 +252,7 @@ async def test_options_flow_no_changes(
         data={
             "api_key": "fakeAPIKey",
             "radius": "",
+            "location": "",
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",

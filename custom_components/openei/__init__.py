@@ -13,6 +13,7 @@ import openeihttp
 from .const import (
     BINARY_SENSORS,
     CONF_API_KEY,
+    CONF_LOCATION,
     CONF_PLAN,
     CONF_RADIUS,
     CONF_SENSOR,
@@ -55,11 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         raise ConfigEntryNotReady
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
-
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
     return True
 
@@ -120,12 +117,25 @@ def get_sensors(hass, config):
     plan = config.data.get(CONF_PLAN)
     radius = config.data.get(CONF_RADIUS)
     meter = config.data.get(CONF_SENSOR)
+    address = config.data.get(CONF_LOCATION)
     readings = None
 
     if meter:
         readings = hass.states.get(meter).state
 
-    rate = openeihttp.Rates(api, lat, lon, plan, radius, readings)
+    if address:
+        lat = None
+        lon = None
+
+    rate = openeihttp.Rates(
+        api=api,
+        lat=lat,
+        lon=lon,
+        plan=plan,
+        radius=radius,
+        address=address,
+        readings=readings,
+    )
     rate.update()
     data = {}
 
@@ -145,18 +155,9 @@ def get_sensors(hass, config):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
-    unloaded = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, platform)
-                for platform in PLATFORMS
-            ]
-        )
-    )
-    if unloaded:
-        hass.data[DOMAIN].pop(entry.entry_id)
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
-    return unloaded
+    return unload_ok
 
 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:

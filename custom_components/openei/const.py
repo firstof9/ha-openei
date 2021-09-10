@@ -18,6 +18,7 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 
 # Configuration and options
 CONF_API_KEY = "api_key"
+CONF_LOCATION = "location"
 CONF_PLAN = "rate_plan"
 CONF_RADIUS = "radius"
 CONF_SENSOR = "sensor"
