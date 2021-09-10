@@ -284,7 +284,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
     address = user_input[CONF_LOCATION] if bool(user_input[CONF_LOCATION]) else None
     radius = user_input[CONF_RADIUS] if bool(user_input[CONF_RADIUS]) else None
 
-    if user_input.get(CONF_LOCATION) is None:
+    if user_input[CONF_LOCATION] is None:
         lat = hass.config.latitude
         lon = hass.config.longitude
 
@@ -307,7 +307,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
     lat = None
     lon = None
 
-    if user_input[CONF_LOCATION] in [None, ""]:
+    if user_input[CONF_LOCATION] is None:
         lat = hass.config.latitude
         lon = hass.config.longitude
 
