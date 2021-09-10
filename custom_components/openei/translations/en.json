@@ -3,10 +3,11 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.",
                 "data": {
                     "api_key": "API Key",
-                    "radius": "Radius in miles (optional)"
+                    "radius": "Radius in miles (optional)",
+                    "location": "City,State or Zip Code (optional)"
                 }
             },
             "user_2": {
@@ -36,7 +37,7 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.",
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)"

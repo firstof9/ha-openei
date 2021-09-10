@@ -13,6 +13,7 @@ import voluptuous as vol
 
 from .const import (
     CONF_API_KEY,
+    CONF_LOCATION,
     CONF_PLAN,
     CONF_RADIUS,
     CONF_SENSOR,
@@ -193,6 +194,9 @@ def _get_schema_step_1(
                 CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
             ): cv.string,
             vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
+            vol.Optional(
+                CONF_LOCATION, default=_get_default(CONF_LOCATION, "")
+            ): cv.string,
         },
     )
 
@@ -251,12 +255,18 @@ def _get_schema_step_3(
 async def _get_utility_list(hass, user_input) -> list | None:
     """Return list of utilities by lat/lon."""
 
-    lat = hass.config.latitude
-    lon = hass.config.longitude
+    lat = None
+    lon = None
+
+    if user_input[CONF_LOCATION] in [None, ""]:
+        lat = hass.config.latitude
+        lon = hass.config.longitude
+
     api = user_input[CONF_API_KEY]
     radius = user_input[CONF_RADIUS]
+    address = user_input[CONF_LOCATION]
 
-    plans = openeihttp.Rates(api, lat, lon, radius=radius)
+    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     utilities = []
 
@@ -270,13 +280,19 @@ async def _get_utility_list(hass, user_input) -> list | None:
 async def _get_plan_list(hass, user_input) -> list | None:
     """Return list of rate plans by lat/lon."""
 
-    lat = hass.config.latitude
-    lon = hass.config.longitude
+    lat = None
+    lon = None
+
+    if user_input[CONF_LOCATION] in [None, ""]:
+        lat = hass.config.latitude
+        lon = hass.config.longitude
+
     api = user_input[CONF_API_KEY]
     radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
+    address = user_input[CONF_LOCATION]
 
-    plans = openeihttp.Rates(api, lat, lon, radius=radius)
+    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     value = {}
 
