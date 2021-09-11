@@ -224,8 +224,8 @@ async def test_options_flow(
             "user_3",
             {
                 "rate_plan": "randomstring",
-                "sensor": "(none)",
-                "manual_plan": "",
+                "sensor": ["(none)"],
+                "manual_plan": "newplan",
             },
             "Fake Utility Co",
             {
@@ -235,7 +235,7 @@ async def test_options_flow(
                 "rate_plan": "randomstring",
                 "sensor": None,
                 "location": "",
-                "manual_plan": "",
+                "manual_plan": "newplan",
             },
         ),
     ],
