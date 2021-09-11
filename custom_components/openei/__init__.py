@@ -112,28 +112,16 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
 
 def get_sensors(hass, config):
     api = config.data.get(CONF_API_KEY)
-    lat = hass.config.latitude
-    lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
-    radius = config.data.get(CONF_RADIUS)
     meter = config.data.get(CONF_SENSOR)
-    address = config.data.get(CONF_LOCATION)
     readings = None
 
     if meter:
         readings = hass.states.get(meter).state
 
-    if address:
-        lat = None
-        lon = None
-
     rate = openeihttp.Rates(
         api=api,
-        lat=lat,
-        lon=lon,
         plan=plan,
-        radius=radius,
-        address=address,
         readings=readings,
     )
     rate.update()

@@ -219,7 +219,7 @@ async def test_options_flow(
             "user_3",
             {
                 "rate_plan": "randomstring",
-                "sensor": "(none)",
+                "sensor": ["(none)"],
             },
             "Fake Utility Co",
             {
@@ -227,7 +227,7 @@ async def test_options_flow(
                 "radius": "",
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
-                "sensor": "(none)",
+                "sensor": ["(none)"],
                 "location": "",
             },
         ),
@@ -279,9 +279,6 @@ async def test_options_flow_no_changes(
         return_value={
             "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
         },
-    ), patch(
-        "custom_components.openei.config_flow._get_entities",
-        return_value=["(none)"],
     ):
 
         result2 = await hass.config_entries.options.async_configure(

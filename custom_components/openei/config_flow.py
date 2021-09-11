@@ -209,8 +209,6 @@ def _get_schema_step_2(
     entry_id: str = None,
 ) -> vol.Schema:
     """Gets a schema using the default_dict as a backup."""
-    if user_input is None:
-        user_input = {}
 
     def _get_default(key: str, fallback_default: Any = None) -> None:
         """Gets default value for key."""
@@ -233,8 +231,6 @@ def _get_schema_step_3(
     entry_id: str = None,
 ) -> vol.Schema:
     """Gets a schema using the default_dict as a backup."""
-    if user_input is None:
-        user_input = {}
 
     if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] is None:
         default_dict.pop(CONF_SENSOR, None)
