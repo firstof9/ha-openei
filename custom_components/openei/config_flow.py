@@ -108,7 +108,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     """Blueprint config flow options handler."""
 
     def __init__(self, config_entry):
-        """Initialize HACS options flow."""
+        """Initialize OpenEI options flow."""
         self.config_entry = config_entry
         self._data = dict(config_entry.data)
         self._errors = {}
@@ -236,7 +236,10 @@ def _get_schema_step_3(
     if user_input is None:
         user_input = {}
 
-    def _get_default(key: str, fallback_default: Any = None) -> None:
+    if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] is None:
+        default_dict.pop(CONF_SENSOR, None)
+
+    def _get_default(key: str, fallback_default: Any = None) -> Any | None:
         """Gets default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
@@ -245,7 +248,7 @@ def _get_schema_step_3(
             vol.Required(CONF_PLAN, default=_get_default(CONF_PLAN, "")): vol.In(
                 plan_list
             ),
-            vol.Optional(
+            vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
             ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
         },
@@ -327,7 +330,8 @@ def _get_entities(
             continue
         data.append(entity.entity_id)
 
+    data.sort
     if extra_entities:
-        data.extend(extra_entities)
+        data.insert(0, extra_entities)
 
     return data
