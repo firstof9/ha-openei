@@ -25,6 +25,7 @@ from custom_components.openei.const import DOMAIN
             {
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
+                "manual_plan": "",
             },
             "Fake Utility Co",
             {
@@ -34,6 +35,7 @@ from custom_components.openei.const import DOMAIN
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
                 "location": "",
+                "manual_plan": "",
             },
         ),
     ],
@@ -115,6 +117,7 @@ async def test_form(
             {
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
+                "manual_plan": "",
             },
             "Fake Utility Co",
             {
@@ -124,6 +127,7 @@ async def test_form(
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
                 "location": "",
+                "manual_plan": "",
             },
         ),
     ],
@@ -150,6 +154,7 @@ async def test_options_flow(
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",
+            "manual_plan": "",
         },
     )
 
@@ -220,6 +225,7 @@ async def test_options_flow(
             {
                 "rate_plan": "randomstring",
                 "sensor": ["(none)"],
+                "manual_plan": "",
             },
             "Fake Utility Co",
             {
@@ -229,6 +235,7 @@ async def test_options_flow(
                 "rate_plan": "randomstring",
                 "sensor": ["(none)"],
                 "location": "",
+                "manual_plan": "",
             },
         ),
     ],
@@ -256,6 +263,7 @@ async def test_options_flow_no_changes(
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",
+            "manual_plan": "",
         },
     )
 
