@@ -45,7 +45,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
         updated_config[CONF_SENSOR] = None
 
-    if CONF_MANUAL_PLAN in updated_config.keys() and entry.data.get(CONF_MANUAL_PLAN):
+    if CONF_MANUAL_PLAN in updated_config.keys() and updated_config[
+        CONF_MANUAL_PLAN
+    ] not in [None, ""]:
         updated_config[CONF_PLAN] = updated_config[CONF_MANUAL_PLAN]
         updated_config.pop(CONF_MANUAL_PLAN, None)
 
