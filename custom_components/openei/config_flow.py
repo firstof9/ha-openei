@@ -14,6 +14,7 @@ import voluptuous as vol
 from .const import (
     CONF_API_KEY,
     CONF_LOCATION,
+    CONF_MANUAL_PLAN,
     CONF_PLAN,
     CONF_RADIUS,
     CONF_SENSOR,
@@ -244,6 +245,9 @@ def _get_schema_step_3(
             vol.Required(CONF_PLAN, default=_get_default(CONF_PLAN, "")): vol.In(
                 plan_list
             ),
+            vol.Optional(
+                CONF_MANUAL_PLAN, default=_get_default(CONF_PLAN, "")
+            ): cv.string,
             vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
             ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
@@ -305,6 +309,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
 def _lookup_plans(handler) -> list:
     """Return list of utilities and plans."""
     response = handler.lookup_plans()
+    response.insert(0, "Not Listed")
     _LOGGER.debug("lookup_plans: %s", response)
     return response
 

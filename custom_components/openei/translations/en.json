@@ -22,7 +22,8 @@
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {
                     "rate_plan": "Rate Plan",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "sensor": "Energy sensor for Tier plans (optional)",
+                    "manual_plan": "Manually enter plan from OpenEI website (optional)"
                 }
             }                        
         },
@@ -55,7 +56,8 @@
                 "description": "Select your plan from the list. If you are unsure, check your utility bill.",
                 "data": {
                     "rate_plan": "Rate Plan",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "sensor": "Energy sensor for Tier plans (optional)",
+                    "manual_plan": "Manually enter plan from OpenEI website (optional)"
                 }
             }  
         }

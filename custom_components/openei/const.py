@@ -1,5 +1,5 @@
 """Constants for integration_blueprint."""
-from homeassistant.const import CURRENCY_DOLLAR, DEVICE_CLASS_MONETARY
+from homeassistant.const import DEVICE_CLASS_MONETARY
 
 # Base component constants
 NAME = "OpenEI"
@@ -19,6 +19,7 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 # Configuration and options
 CONF_API_KEY = "api_key"
 CONF_LOCATION = "location"
+CONF_MANUAL_PLAN = "manual_plan"
 CONF_PLAN = "rate_plan"
 CONF_RADIUS = "radius"
 CONF_SENSOR = "sensor"
