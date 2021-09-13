@@ -125,7 +125,7 @@ async def test_form(
                 "radius": "20",
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
-                "sensor": "(none)",
+                "sensor": None,
                 "location": "",
                 "manual_plan": "",
             },
@@ -224,7 +224,7 @@ async def test_options_flow(
             "user_3",
             {
                 "rate_plan": "randomstring",
-                "sensor": ["(none)"],
+                "sensor": "(none)",
                 "manual_plan": "",
             },
             "Fake Utility Co",
@@ -233,7 +233,7 @@ async def test_options_flow(
                 "radius": "",
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
-                "sensor": ["(none)"],
+                "sensor": None,
                 "location": "",
                 "manual_plan": "",
             },
@@ -260,6 +260,115 @@ async def test_options_flow_no_changes(
             "api_key": "fakeAPIKey",
             "radius": "",
             "location": "",
+            "utility": "Fake Utility Co",
+            "rate_plan": "randomstring",
+            "sensor": "(none)",
+            "manual_plan": "",
+        },
+    )
+
+    entry.add_to_hass(hass)
+
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    await setup.async_setup_component(hass, "persistent_notification", {})
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["type"] == "form"
+    assert result["errors"] == {}
+    # assert result["title"] == title_1
+
+    with patch("custom_components.openei.async_setup", return_value=True), patch(
+        "custom_components.openei.async_setup_entry",
+        return_value=True,
+    ), patch(
+        "custom_components.openei.config_flow._lookup_plans",
+        return_value={
+            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
+        },
+    ):
+
+        result2 = await hass.config_entries.options.async_configure(
+            result["flow_id"], input_1
+        )
+        await hass.async_block_till_done()
+
+        assert result2["type"] == "form"
+        assert result2["step_id"] == step_id_2
+
+        result3 = await hass.config_entries.options.async_configure(
+            result["flow_id"], input_2
+        )
+        await hass.async_block_till_done()
+
+        assert result3["type"] == "form"
+        assert result3["step_id"] == step_id_3
+        result4 = await hass.config_entries.options.async_configure(
+            result["flow_id"], input_3
+        )
+        await hass.async_block_till_done()
+        assert result4["type"] == "create_entry"
+        assert data == entry.data.copy()
+
+        await hass.async_block_till_done()
+        assert (
+            "Attempting to reload entities from the openei integration" in caplog.text
+        )
+
+
+@pytest.mark.parametrize(
+    "input_1,step_id_2,input_2,step_id_3,input_3,title,data",
+    [
+        (
+            {
+                "api_key": "fakeAPIKey",
+                "radius": "",
+                "location": "",
+            },
+            "user_2",
+            {
+                "utility": "Fake Utility Co",
+            },
+            "user_3",
+            {
+                "rate_plan": "randomstring",
+                "sensor": "(none)",
+                "manual_plan": "",
+            },
+            "Fake Utility Co",
+            {
+                "api_key": "fakeAPIKey",
+                "radius": "",
+                "utility": "Fake Utility Co",
+                "rate_plan": "randomstring",
+                "sensor": None,
+                "location": "",
+                "manual_plan": "",
+            },
+        ),
+    ],
+)
+async def test_options_flow_some_changes(
+    input_1,
+    step_id_2,
+    input_2,
+    step_id_3,
+    input_3,
+    title,
+    data,
+    hass,
+    mock_api,
+    caplog,
+):
+    """Test config flow options."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data={
+            "api_key": "fakeAPIKey",
+            "radius": "",
+            "location": "12345",
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",
