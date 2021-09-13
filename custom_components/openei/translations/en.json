@@ -7,7 +7,7 @@
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)",
-                    "location": "City,State or Zip Code (optional)"
+                    "location": "City,State or Zip Code (optional)(Enter \"\" to clear)"
                 }
             },
             "user_2": {
