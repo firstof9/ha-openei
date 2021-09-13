@@ -16,7 +16,6 @@ from .const import (
     CONF_LOCATION,
     CONF_MANUAL_PLAN,
     CONF_PLAN,
-    CONF_RADIUS,
     CONF_SENSOR,
     DOMAIN,
     PLATFORMS,
@@ -42,13 +41,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     updated_config = entry.data.copy()
 
-    if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
-        updated_config[CONF_SENSOR] = None
+    _LOGGER.debug("config_entry: %s", updated_config)
 
-    if CONF_MANUAL_PLAN in updated_config.keys() and entry.data.get(CONF_MANUAL_PLAN):
+    if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
+        updated_config.pop(CONF_SENSOR, None)
+
+    if CONF_MANUAL_PLAN in updated_config.keys() and updated_config[CONF_MANUAL_PLAN]:
         updated_config[CONF_PLAN] = updated_config[CONF_MANUAL_PLAN]
         updated_config.pop(CONF_MANUAL_PLAN, None)
 
+    if CONF_LOCATION in updated_config.keys() and updated_config[CONF_LOCATION] == "":
+        updated_config.pop(CONF_LOCATION, None)
+
+    _LOGGER.debug("updated_config: %s", updated_config)
     if updated_config != entry.data:
         hass.config_entries.async_update_entry(entry, data=updated_config)
 
@@ -115,19 +120,25 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed() from exception
 
 
-def get_sensors(hass, config):
+def get_sensors(hass, config) -> dict:
     api = config.data.get(CONF_API_KEY)
     plan = config.data.get(CONF_PLAN)
     meter = config.data.get(CONF_SENSOR)
-    readings = None
+    reading = None
 
     if meter:
-        readings = hass.states.get(meter).state
+        _LOGGER.debug("Using meter data from sensor: %s", meter)
+        reading = hass.states.get(meter)
+        if not reading:
+            reading = None
+            _LOGGER.warning("Sensor: %s is not valid.", meter)
+        else:
+            reading = reading.state
 
     rate = openeihttp.Rates(
         api=api,
         plan=plan,
-        readings=readings,
+        reading=reading,
     )
     rate.update()
     data = {}

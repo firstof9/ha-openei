@@ -121,25 +121,32 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            if user_input[CONF_LOCATION] == '""':
+                user_input[CONF_LOCATION] = None
+            if user_input[CONF_RADIUS] == '""':
+                user_input[CONF_RADIUS] = None
             self._data.update(user_input)
+            _LOGGER.debug("Step 1: %s", user_input)
             return await self.async_step_user_2()
 
         return await self._show_config_form(user_input)
 
     async def async_step_user_2(self, user_input=None):
         """Handle a flow initialized by the user."""
-
+        _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
+            _LOGGER.debug("Step 2: %s", user_input)
             return await self.async_step_user_3()
 
         return await self._show_config_form_2(user_input)
 
     async def async_step_user_3(self, user_input=None):
         """Handle a flow initialized by the user."""
-
+        _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
+            _LOGGER.debug("Step 3: %s", user_input)
             return self.async_create_entry(title="", data=self._data)
 
         return await self._show_config_form_3(user_input)
@@ -148,7 +155,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema_step_1(self.hass, self._data, self._data),
+            data_schema=_get_schema_step_1(self.hass, user_input, self._data),
             errors=self._errors,
         )
 
@@ -158,7 +165,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="user_2",
             data_schema=_get_schema_step_2(
-                self.hass, self._data, self._data, utility_list
+                self.hass, user_input, self._data, utility_list
             ),
             errors=self._errors,
         )
@@ -169,7 +176,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="user_3",
             data_schema=_get_schema_step_3(
-                self.hass, self._data, self._data, plan_list
+                self.hass, user_input, self._data, plan_list
             ),
             errors=self._errors,
         )
@@ -210,6 +217,8 @@ def _get_schema_step_2(
     entry_id: str = None,
 ) -> vol.Schema:
     """Gets a schema using the default_dict as a backup."""
+    if user_input is None:
+        user_input = {}
 
     def _get_default(key: str, fallback_default: Any = None) -> None:
         """Gets default value for key."""
@@ -232,6 +241,8 @@ def _get_schema_step_3(
     entry_id: str = None,
 ) -> vol.Schema:
     """Gets a schema using the default_dict as a backup."""
+    if user_input is None:
+        user_input = {}
 
     if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] is None:
         default_dict.pop(CONF_SENSOR, None)
@@ -250,7 +261,7 @@ def _get_schema_step_3(
             ): cv.string,
             vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
-            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
+            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", "(none)")),
         },
     )
 
@@ -268,6 +279,12 @@ async def _get_utility_list(hass, user_input) -> list | None:
     api = user_input[CONF_API_KEY]
     radius = user_input[CONF_RADIUS]
     address = user_input[CONF_LOCATION]
+
+    _LOGGER.debug("get_utility_list: address=%s lat=%s lon=%s", address, lat, lon)
+
+    if not address and not (lat and lon):
+        _LOGGER.error("Data missing for utility lookup.")
+        return []
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
@@ -309,7 +326,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
 def _lookup_plans(handler) -> list:
     """Return list of utilities and plans."""
     response = handler.lookup_plans()
-    response.insert(0, "Not Listed")
+    response["Not Listed"] = [{"name": "Not Listed", "label": "Not Listed"}]
     _LOGGER.debug("lookup_plans: %s", response)
     return response
 
@@ -336,3 +353,14 @@ def _get_entities(
         data.insert(0, extra_entities)
 
     return data
+
+
+def _validate_user_input(user_input: dict) -> dict:
+    """Validate user input from config flow."""
+
+    if user_input[CONF_LOCATION] == "":
+        user_input[CONF_LOCATION] = None
+    if user_input[CONF_RADIUS] == "":
+        user_input[CONF_RADIUS] = None
+
+    return user_input
