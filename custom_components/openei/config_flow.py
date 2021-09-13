@@ -145,6 +145,8 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
+            if user_input[CONF_SENSOR] == "(none)":
+                user_input[CONF_SENSOR] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 3: %s", user_input)
             return self.async_create_entry(title="", data=self._data)
@@ -244,7 +246,7 @@ def _get_schema_step_3(
     if user_input is None:
         user_input = {}
 
-    if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] is None:
+    if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] == "(none)":
         default_dict.pop(CONF_SENSOR, None)
 
     def _get_default(key: str, fallback_default: Any = None) -> Any | None:
