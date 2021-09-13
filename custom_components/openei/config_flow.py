@@ -280,12 +280,6 @@ async def _get_utility_list(hass, user_input) -> list | None:
     radius = user_input[CONF_RADIUS]
     address = user_input[CONF_LOCATION]
 
-    _LOGGER.debug("get_utility_list: address=%s lat=%s lon=%s", address, lat, lon)
-
-    if not address and not (lat and lon):
-        _LOGGER.error("Data missing for utility lookup.")
-        return []
-
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     utilities = []
@@ -353,14 +347,3 @@ def _get_entities(
         data.insert(0, extra_entities)
 
     return data
-
-
-def _validate_user_input(user_input: dict) -> dict:
-    """Validate user input from config flow."""
-
-    if user_input[CONF_LOCATION] == "":
-        user_input[CONF_LOCATION] = None
-    if user_input[CONF_RADIUS] == "":
-        user_input[CONF_RADIUS] = None
-
-    return user_input
