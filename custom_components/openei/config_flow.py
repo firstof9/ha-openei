@@ -41,6 +41,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             self._data.update(user_input)
             return await self.async_step_user_2()
 
@@ -51,6 +54,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             self._data.update(user_input)
             return await self.async_step_user_3()
 
@@ -61,6 +67,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             self._data.update(user_input)
             return self.async_create_entry(
                 title=self._data[CONF_UTILITY], data=self._data
@@ -270,17 +279,16 @@ def _get_schema_step_3(
 
 async def _get_utility_list(hass, user_input) -> list | None:
     """Return list of utilities by lat/lon."""
-
     lat = None
     lon = None
+    address = user_input[CONF_LOCATION] if bool(user_input[CONF_LOCATION]) else None
+    radius = user_input[CONF_RADIUS] if bool(user_input[CONF_RADIUS]) else None
 
-    if user_input[CONF_LOCATION] in [None, ""]:
+    if user_input.get(CONF_LOCATION) is None:
         lat = hass.config.latitude
         lon = hass.config.longitude
 
     api = user_input[CONF_API_KEY]
-    radius = user_input[CONF_RADIUS]
-    address = user_input[CONF_LOCATION]
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
