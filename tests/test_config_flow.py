@@ -324,7 +324,7 @@ async def test_options_flow_no_changes(
             {
                 "api_key": "fakeAPIKey",
                 "radius": 0,
-                "location": "",
+                "location": "''",
             },
             "user_2",
             {
@@ -343,7 +343,7 @@ async def test_options_flow_no_changes(
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
-                "location": "",
+                "location": "''",
                 "manual_plan": "",
             },
         ),

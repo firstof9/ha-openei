@@ -131,9 +131,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
-            for key, value in user_input.items():
-                if not bool(value):
-                    user_input[key] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 2: %s", user_input)
             return await self.async_step_user_3()
@@ -273,7 +270,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
     address = user_input[CONF_LOCATION]
     radius = user_input[CONF_RADIUS]
 
-    if user_input[CONF_LOCATION] in [None, '""']:
+    if user_input[CONF_LOCATION] in [None, '""', "''"]:
         lat = hass.config.latitude
         lon = hass.config.longitude
         address = None
@@ -299,7 +296,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
     radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
 
-    if user_input[CONF_LOCATION] in [None, '""']:
+    if user_input[CONF_LOCATION] in [None, '""', "''"]:
         lat = hass.config.latitude
         lon = hass.config.longitude
         address = None
