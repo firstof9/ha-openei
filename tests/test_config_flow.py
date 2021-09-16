@@ -14,7 +14,7 @@ from custom_components.openei.const import DOMAIN
         (
             {
                 "api_key": "fakeAPIKey",
-                "radius": 0,
+                "radius": None,
                 "location": "",
             },
             "user_2",
@@ -125,9 +125,9 @@ async def test_form(
                 "radius": 20,
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
-                "sensor": "(none)",
-                "location": "",
-                "manual_plan": "",
+                "sensor": None,
+                "location": None,
+                "manual_plan": None,
             },
         ),
     ],
@@ -150,7 +150,7 @@ async def test_options_flow(
         data={
             "api_key": "fakeAPIKey",
             "radius": None,
-            "location": "",
+            "location": None,
             "utility": "Fake Utility Co",
             "rate_plan": "randomstring",
             "sensor": "(none)",
@@ -214,7 +214,7 @@ async def test_options_flow(
         (
             {
                 "api_key": "fakeAPIKey",
-                "radius": 0,
+                "radius": None,
                 "location": "",
             },
             "user_2",
@@ -230,12 +230,12 @@ async def test_options_flow(
             "Fake Utility Co",
             {
                 "api_key": "fakeAPIKey",
-                "radius": 0,
+                "radius": None,
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": None,
-                "location": "",
-                "manual_plan": "",
+                "location": None,
+                "manual_plan": None,
             },
         ),
     ],
@@ -323,8 +323,8 @@ async def test_options_flow_no_changes(
         (
             {
                 "api_key": "fakeAPIKey",
-                "radius": 0,
-                "location": "''",
+                "radius": None,
+                "location": None,
             },
             "user_2",
             {
@@ -339,12 +339,12 @@ async def test_options_flow_no_changes(
             "Fake Utility Co",
             {
                 "api_key": "fakeAPIKey",
-                "radius": 0,
+                "radius": None,
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": None,
-                "location": "",
-                "manual_plan": "",
+                "location": None,
+                "manual_plan": None,
             },
         ),
     ],

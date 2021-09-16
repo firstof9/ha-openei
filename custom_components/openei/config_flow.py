@@ -121,6 +121,9 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 1: %s", user_input)
             return await self.async_step_user_2()
@@ -141,6 +144,11 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
+            if user_input[CONF_SENSOR] == "(none)":
+                user_input[CONF_SENSOR] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 3: %s", user_input)
             return self.async_create_entry(title="", data=self._data)
@@ -195,12 +203,12 @@ def _get_schema_step_1(
     return vol.Schema(
         {
             vol.Required(CONF_API_KEY, default=_get_default(CONF_API_KEY)): cv.string,
+            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, None)): vol.Any(
+                None, vol.Coerce(int)
+            ),
             vol.Optional(
                 CONF_LOCATION, default=_get_default(CONF_LOCATION, "")
-            ): cv.string,
-            vol.Required(CONF_RADIUS, default=_get_default(CONF_RADIUS, 0)): vol.All(
-                vol.Coerce(int), vol.Range(min=0, max=200)
-            ),
+            ): vol.Any(None, cv.string),
         },
     )
 
@@ -254,7 +262,7 @@ def _get_schema_step_3(
             ),
             vol.Optional(
                 CONF_MANUAL_PLAN, default=_get_default(CONF_PLAN, "")
-            ): cv.string,
+            ): vol.Any(None, cv.string),
             vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
             ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", "(none)")),
