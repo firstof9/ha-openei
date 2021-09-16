@@ -130,10 +130,9 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
-            if user_input[CONF_LOCATION] == '""':
-                user_input[CONF_LOCATION] = None
-            if user_input[CONF_RADIUS] == '""':
-                user_input[CONF_RADIUS] = None
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 1: %s", user_input)
             return await self.async_step_user_2()
@@ -154,6 +153,9 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
+            for key, value in user_input.items():
+                if not bool(value):
+                    user_input[key] = None
             if user_input[CONF_SENSOR] == "(none)":
                 user_input[CONF_SENSOR] = None
             self._data.update(user_input)
@@ -162,7 +164,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
         return await self._show_config_form_3(user_input)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -170,7 +172,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
             errors=self._errors,
         )
 
-    async def _show_config_form_2(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_2(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         utility_list = await _get_utility_list(self.hass, self._data)
         return self.async_show_form(
@@ -181,7 +183,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
             errors=self._errors,
         )
 
-    async def _show_config_form_3(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_3(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         plan_list = await _get_plan_list(self.hass, self._data)
         return self.async_show_form(
@@ -209,13 +211,13 @@ def _get_schema_step_1(
 
     return vol.Schema(
         {
-            vol.Required(
-                CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
-            ): cv.string,
-            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
+            vol.Required(CONF_API_KEY, default=_get_default(CONF_API_KEY)): cv.string,
+            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, None)): vol.Any(
+                None, vol.Coerce(int)
+            ),
             vol.Optional(
                 CONF_LOCATION, default=_get_default(CONF_LOCATION, "")
-            ): cv.string,
+            ): vol.Any(None, cv.string),
         },
     )
 
@@ -269,7 +271,7 @@ def _get_schema_step_3(
             ),
             vol.Optional(
                 CONF_MANUAL_PLAN, default=_get_default(CONF_PLAN, "")
-            ): cv.string,
+            ): vol.Any(None, cv.string),
             vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
             ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", "(none)")),
