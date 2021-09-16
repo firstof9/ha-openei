@@ -41,9 +41,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
-            for key, value in user_input.items():
-                if not bool(value):
-                    user_input[key] = None
             self._data.update(user_input)
             return await self.async_step_user_2()
 
@@ -54,9 +51,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
-            for key, value in user_input.items():
-                if not bool(value):
-                    user_input[key] = None
             self._data.update(user_input)
             return await self.async_step_user_3()
 
@@ -67,9 +61,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
-            for key, value in user_input.items():
-                if not bool(value):
-                    user_input[key] = None
             self._data.update(user_input)
             return self.async_create_entry(
                 title=self._data[CONF_UTILITY], data=self._data
@@ -130,10 +121,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
-            if user_input[CONF_LOCATION] == '""':
-                user_input[CONF_LOCATION] = None
-            if user_input[CONF_RADIUS] == '""':
-                user_input[CONF_RADIUS] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 1: %s", user_input)
             return await self.async_step_user_2()
@@ -154,15 +141,13 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
-            if user_input[CONF_SENSOR] == "(none)":
-                user_input[CONF_SENSOR] = None
             self._data.update(user_input)
             _LOGGER.debug("Step 3: %s", user_input)
             return self.async_create_entry(title="", data=self._data)
 
         return await self._show_config_form_3(user_input)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -170,7 +155,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
             errors=self._errors,
         )
 
-    async def _show_config_form_2(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_2(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         utility_list = await _get_utility_list(self.hass, self._data)
         return self.async_show_form(
@@ -181,7 +166,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
             errors=self._errors,
         )
 
-    async def _show_config_form_3(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_3(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         plan_list = await _get_plan_list(self.hass, self._data)
         return self.async_show_form(
@@ -209,13 +194,13 @@ def _get_schema_step_1(
 
     return vol.Schema(
         {
-            vol.Required(
-                CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
-            ): cv.string,
-            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
+            vol.Required(CONF_API_KEY, default=_get_default(CONF_API_KEY)): cv.string,
             vol.Optional(
                 CONF_LOCATION, default=_get_default(CONF_LOCATION, "")
             ): cv.string,
+            vol.Required(CONF_RADIUS, default=_get_default(CONF_RADIUS, 0)): vol.All(
+                vol.Coerce(int), vol.Range(min=0, max=200)
+            ),
         },
     )
 
@@ -281,14 +266,14 @@ async def _get_utility_list(hass, user_input) -> list | None:
     """Return list of utilities by lat/lon."""
     lat = None
     lon = None
-    address = user_input[CONF_LOCATION] if bool(user_input[CONF_LOCATION]) else None
-    radius = user_input[CONF_RADIUS] if bool(user_input[CONF_RADIUS]) else None
+    api = user_input[CONF_API_KEY]
+    address = user_input[CONF_LOCATION]
+    radius = user_input[CONF_RADIUS]
 
-    if user_input.get(CONF_LOCATION) is None:
+    if user_input[CONF_LOCATION] in [None, '""', "''"]:
         lat = hass.config.latitude
         lon = hass.config.longitude
-
-    api = user_input[CONF_API_KEY]
+        address = None
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
@@ -306,15 +291,15 @@ async def _get_plan_list(hass, user_input) -> list | None:
 
     lat = None
     lon = None
-
-    if user_input[CONF_LOCATION] in [None, ""]:
-        lat = hass.config.latitude
-        lon = hass.config.longitude
-
+    address = user_input[CONF_LOCATION]
     api = user_input[CONF_API_KEY]
     radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
-    address = user_input[CONF_LOCATION]
+
+    if user_input[CONF_LOCATION] in [None, '""', "''"]:
+        lat = hass.config.latitude
+        lon = hass.config.longitude
+        address = None
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)

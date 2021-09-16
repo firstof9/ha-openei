@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.\n\nEnter \"\" to clear optional fields.",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.\n\nEnter \"\" in address to use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)",
@@ -38,7 +38,7 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.\n\nEnter \"\" to clear optional fields.",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nIf location information is omitted your latitude and longitude will be used.\n\nEnter \"\" in address to use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)",
