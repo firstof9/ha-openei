@@ -16,17 +16,30 @@ def auto_enable_custom_integrations(enable_custom_integrations):
 @pytest.fixture(name="mock_api")
 def mock_api():
     """Mock the library calls."""
-    with patch("custom_components.openei.openeihttp"), patch(
-        "custom_components.openei.config_flow.openeihttp"
-    ):
-        mock_conn = mock.Mock(spec=openeihttp.Rates)
-        mock_conn.return_value.current_rate.return_value = 0.24477
-        mock_conn.return_value.distributed_generation.return_value = "Net Metering"
-        mock_conn.return_value.approval.return_value = True
-        mock_conn.return_value.rate_name.return_value = 0.24477
-        mock_conn.return_value.mincharge.return_value = (10, "$/month")
+    with patch("custom_components.openei.openeihttp.Rates") as mock_api:
+        # mock_api = mock.Mock(spec=openeihttp.Rates)
+        mock_api.return_value.current_rate = 0.24477
+        mock_api.return_value.distributed_generation = "Net Metering"
+        mock_api.return_value.approval = True
+        mock_api.return_value.rate_name = 0.24477
+        mock_api.return_value.mincharge = (10, "$/month")
+        mock_api.return_value.lookup_plans = (
+            '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
+        )
 
-        yield mock_conn
+        yield mock_api
+
+
+@pytest.fixture(name="mock_api_config")
+def mock_api_config():
+    """Mock the library calls."""
+    with patch("custom_components.openei.config_flow.openeihttp.Rates") as mock_api:
+        # mock_api = mock.Mock()
+        mock_api.return_value.lookup_plans = {
+            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
+        }
+
+        yield mock_api
 
 
 @pytest.fixture(name="mock_sensors")
