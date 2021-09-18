@@ -42,7 +42,7 @@ If you have any issues with this you need to open an issue here:
 SENSOR_TYPES = {
     "current_rate": [
         "Current Energy Rate",
-        "mdi:currency-usd",
+        "mdi:cash-multiple",
         None,
         DEVICE_CLASS_MONETARY,
     ],
@@ -51,10 +51,11 @@ SENSOR_TYPES = {
     "all_rates": ["All Listed Rates", "mdi:format-list-bulleted", None, None],
     "monthly_tier_rate": [
         "Monthly Energy Rate",
-        "mdi:currency-usd",
+        "mdi:cash-multiple",
         None,
         DEVICE_CLASS_MONETARY,
     ],
+    "mincharge": ["Minimum Charge", "mdi:cash-multiple", None, DEVICE_CLASS_MONETARY],
 }
 
 BINARY_SENSORS = {

@@ -24,6 +24,7 @@ def mock_api():
         mock_conn.return_value.distributed_generation.return_value = "Net Metering"
         mock_conn.return_value.approval.return_value = True
         mock_conn.return_value.rate_name.return_value = 0.24477
+        mock_conn.return_value.mincharge.return_value = (10, "$/month")
 
         yield mock_conn
 
@@ -37,5 +38,7 @@ def mock_get_sensors():
             "distributed_generation": "Net Metering",
             "approval": True,
             "rate_name": "Fake Test Rate",
+            "mincharge": 10,
+            "mincharge_uom": "$/month",
         }
     yield mock_sensors
