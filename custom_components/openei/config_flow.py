@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv
 import openeihttp
 import voluptuous as vol
 
@@ -41,7 +40,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         if user_input is not None:
-            _LOGGER.debug("Step 1: %s", user_input)
             self._data.update(user_input)
             return await self.async_step_user_2()
 
@@ -122,8 +120,9 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            if user_input[CONF_LOCATION] == '""':
+                user_input[CONF_LOCATION] = ""
             self._data.update(user_input)
-            _LOGGER.debug("Step 1: %s", user_input)
             return await self.async_step_user_2()
 
         return await self._show_config_form(user_input)
@@ -133,7 +132,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
-            _LOGGER.debug("Step 2: %s", user_input)
             return await self.async_step_user_3()
 
         return await self._show_config_form_2(user_input)
@@ -143,7 +141,6 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
-            _LOGGER.debug("Step 3: %s", user_input)
             return self.async_create_entry(title="", data=self._data)
 
         return await self._show_config_form_3(user_input)
@@ -273,7 +270,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
     address = user_input[CONF_LOCATION]
     radius = user_input[CONF_RADIUS]
 
-    if not bool(user_input[CONF_LOCATION]):
+    if not bool(address):
         lat = hass.config.latitude
         lon = hass.config.longitude
         address = None
@@ -299,7 +296,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
     radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
 
-    if not bool(user_input[CONF_LOCATION]):
+    if not bool(address):
         lat = hass.config.latitude
         lon = hass.config.longitude
         address = None

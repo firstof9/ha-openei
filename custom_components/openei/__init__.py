@@ -50,9 +50,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         updated_config[CONF_PLAN] = updated_config[CONF_MANUAL_PLAN]
         updated_config.pop(CONF_MANUAL_PLAN, None)
 
-    if CONF_LOCATION in updated_config.keys() and updated_config[CONF_LOCATION] == "":
-        updated_config.pop(CONF_LOCATION, None)
-
     _LOGGER.debug("updated_config: %s", updated_config)
     if updated_config != entry.data:
         hass.config_entries.async_update_entry(entry, data=updated_config)

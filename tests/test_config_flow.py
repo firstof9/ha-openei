@@ -58,7 +58,7 @@ async def test_form(
     )
     assert result["type"] == "form"
     assert result["errors"] == {}
-    # assert result["title"] == title_1
+    # assert result['title'] == title_1
 
     with patch(
         "custom_components.openei.async_setup", return_value=True
@@ -168,7 +168,7 @@ async def test_options_flow(
 
     assert result["type"] == "form"
     assert result["errors"] == {}
-    # assert result["title"] == title_1
+    # assert result['title'] == title_1
 
     with patch("custom_components.openei.async_setup", return_value=True), patch(
         "custom_components.openei.async_setup_entry",
@@ -277,7 +277,7 @@ async def test_options_flow_no_changes(
 
     assert result["type"] == "form"
     assert result["errors"] == {}
-    # assert result["title"] == title_1
+    # assert result['title'] == title_1
 
     with patch("custom_components.openei.async_setup", return_value=True), patch(
         "custom_components.openei.async_setup_entry",
@@ -324,7 +324,7 @@ async def test_options_flow_no_changes(
             {
                 "api_key": "fakeAPIKey",
                 "radius": 0,
-                "location": "''",
+                "location": '""',
             },
             "user_2",
             {
@@ -343,7 +343,7 @@ async def test_options_flow_no_changes(
                 "utility": "Fake Utility Co",
                 "rate_plan": "randomstring",
                 "sensor": "(none)",
-                "location": "''",
+                "location": "",
                 "manual_plan": "",
             },
         ),
@@ -386,7 +386,7 @@ async def test_options_flow_some_changes(
 
     assert result["type"] == "form"
     assert result["errors"] == {}
-    # assert result["title"] == title_1
+    # assert result['title'] == title_1
 
     with patch("custom_components.openei.async_setup", return_value=True), patch(
         "custom_components.openei.async_setup_entry",
