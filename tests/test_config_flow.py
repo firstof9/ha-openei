@@ -141,7 +141,7 @@ async def test_options_flow(
     title,
     data,
     hass,
-    mock_api,
+    mock_api_config,
 ):
     """Test config flow options."""
     entry = MockConfigEntry(
@@ -173,11 +173,6 @@ async def test_options_flow(
     with patch("custom_components.openei.async_setup", return_value=True), patch(
         "custom_components.openei.async_setup_entry",
         return_value=True,
-    ), patch(
-        "custom_components.openei.config_flow._lookup_plans",
-        return_value={
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
-        },
     ), patch(
         "custom_components.openei.config_flow._get_entities",
         return_value=["(none)"],

@@ -142,7 +142,12 @@ def get_sensors(hass, config) -> dict:
 
     for sensor in SENSOR_TYPES:
         _sensor = {}
-        _sensor[sensor] = getattr(rate, sensor)
+        value = getattr(rate, sensor)
+        if isinstance(value, tuple):
+            _sensor[sensor] = value[0]
+            _sensor[f"{sensor}_uom"] = value[1]
+        else:
+            _sensor[sensor] = getattr(rate, sensor)
         data.update(_sensor)
 
     for sensor in BINARY_SENSORS:
