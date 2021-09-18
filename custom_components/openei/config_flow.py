@@ -315,7 +315,6 @@ async def _get_plan_list(hass, user_input) -> list | None:
 def _lookup_plans(handler) -> list:
     """Return list of utilities and plans."""
     response = handler.lookup_plans
-    response["Not Listed"] = [{"name": "Not Listed", "label": "Not Listed"}]
     _LOGGER.debug("lookup_plans: %s", response)
     return response
 
