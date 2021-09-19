@@ -1,7 +1,6 @@
-from unittest import mock
+"""Test configurations."""
 from unittest.mock import patch
 
-import openeihttp
 import pytest
 
 
@@ -34,12 +33,12 @@ def mock_api():
 def mock_api_config():
     """Mock the library calls."""
     with patch("custom_components.openei.config_flow.openeihttp.Rates") as mock_api:
-        # mock_api = mock.Mock()
-        mock_api.return_value.lookup_plans = {
+        mock_return = mock_api.return_value
+        mock_return.lookup_plans.return_value = {
             "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
         }
 
-        yield mock_api
+        yield mock_return
 
 
 @pytest.fixture(name="mock_sensors")
