@@ -7,12 +7,13 @@ from typing import Any, Dict, List, Optional
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv
 import openeihttp
 import voluptuous as vol
 
 from .const import (
     CONF_API_KEY,
+    CONF_LOCATION,
+    CONF_MANUAL_PLAN,
     CONF_PLAN,
     CONF_RADIUS,
     CONF_SENSOR,
@@ -107,7 +108,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     """Blueprint config flow options handler."""
 
     def __init__(self, config_entry):
-        """Initialize HACS options flow."""
+        """Initialize OpenEI options flow."""
         self.config_entry = config_entry
         self._data = dict(config_entry.data)
         self._errors = {}
@@ -119,6 +120,8 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            if user_input[CONF_LOCATION] == '""':
+                user_input[CONF_LOCATION] = ""
             self._data.update(user_input)
             return await self.async_step_user_2()
 
@@ -126,7 +129,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_user_2(self, user_input=None):
         """Handle a flow initialized by the user."""
-
+        _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_user_3()
@@ -135,39 +138,39 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_user_3(self, user_input=None):
         """Handle a flow initialized by the user."""
-
+        _LOGGER.debug("data: %s", self._data)
         if user_input is not None:
             self._data.update(user_input)
             return self.async_create_entry(title="", data=self._data)
 
         return await self._show_config_form_3(user_input)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema_step_1(self.hass, self._data, self._data),
+            data_schema=_get_schema_step_1(self.hass, user_input, self._data),
             errors=self._errors,
         )
 
-    async def _show_config_form_2(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_2(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         utility_list = await _get_utility_list(self.hass, self._data)
         return self.async_show_form(
             step_id="user_2",
             data_schema=_get_schema_step_2(
-                self.hass, self._data, self._data, utility_list
+                self.hass, user_input, self._data, utility_list
             ),
             errors=self._errors,
         )
 
-    async def _show_config_form_3(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form_3(self, user_input: Optional[Dict[str, Any]]):
         """Show the configuration form to edit location data."""
         plan_list = await _get_plan_list(self.hass, self._data)
         return self.async_show_form(
             step_id="user_3",
             data_schema=_get_schema_step_3(
-                self.hass, self._data, self._data, plan_list
+                self.hass, user_input, self._data, plan_list
             ),
             errors=self._errors,
         )
@@ -183,16 +186,23 @@ def _get_schema_step_1(
     if user_input is None:
         user_input = {}
 
+    if CONF_LOCATION in user_input.keys() and user_input[CONF_LOCATION] == '""':
+        user_input[CONF_LOCATION] = ""
+
+    if CONF_LOCATION in default_dict.keys() and default_dict[CONF_LOCATION] == '""':
+        default_dict[CONF_LOCATION] = ""
+
     def _get_default(key: str, fallback_default: Any = None) -> None:
         """Gets default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
     return vol.Schema(
         {
-            vol.Required(
-                CONF_API_KEY, default=_get_default(CONF_API_KEY, "")
-            ): cv.string,
-            vol.Optional(CONF_RADIUS, default=_get_default(CONF_RADIUS, "")): cv.string,
+            vol.Required(CONF_API_KEY, default=_get_default(CONF_API_KEY)): str,
+            vol.Optional(CONF_LOCATION, default=_get_default(CONF_LOCATION, "")): str,
+            vol.Required(CONF_RADIUS, default=_get_default(CONF_RADIUS, 0)): vol.All(
+                vol.Coerce(int), vol.Range(min=0, max=200)
+            ),
         },
     )
 
@@ -232,7 +242,10 @@ def _get_schema_step_3(
     if user_input is None:
         user_input = {}
 
-    def _get_default(key: str, fallback_default: Any = None) -> None:
+    if CONF_SENSOR in default_dict.keys() and default_dict[CONF_SENSOR] == "(none)":
+        default_dict.pop(CONF_SENSOR, None)
+
+    def _get_default(key: str, fallback_default: Any = None) -> Any | None:
         """Gets default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
@@ -241,22 +254,28 @@ def _get_schema_step_3(
             vol.Required(CONF_PLAN, default=_get_default(CONF_PLAN, "")): vol.In(
                 plan_list
             ),
-            vol.Optional(
+            vol.Optional(CONF_MANUAL_PLAN, default=_get_default(CONF_PLAN, "")): str,
+            vol.Required(
                 CONF_SENSOR, default=_get_default(CONF_SENSOR, "(none)")
-            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", ["(none)"])),
+            ): vol.In(_get_entities(hass, SENSORS_DOMAIN, "energy", "(none)")),
         },
     )
 
 
 async def _get_utility_list(hass, user_input) -> list | None:
     """Return list of utilities by lat/lon."""
-
-    lat = hass.config.latitude
-    lon = hass.config.longitude
+    lat = None
+    lon = None
     api = user_input[CONF_API_KEY]
+    address = user_input[CONF_LOCATION]
     radius = user_input[CONF_RADIUS]
 
-    plans = openeihttp.Rates(api, lat, lon, radius=radius)
+    if not bool(address):
+        lat = hass.config.latitude
+        lon = hass.config.longitude
+        address = None
+
+    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     utilities = []
 
@@ -270,13 +289,19 @@ async def _get_utility_list(hass, user_input) -> list | None:
 async def _get_plan_list(hass, user_input) -> list | None:
     """Return list of rate plans by lat/lon."""
 
-    lat = hass.config.latitude
-    lon = hass.config.longitude
+    lat = None
+    lon = None
+    address = user_input[CONF_LOCATION]
     api = user_input[CONF_API_KEY]
     radius = user_input[CONF_RADIUS]
     utility = user_input[CONF_UTILITY]
 
-    plans = openeihttp.Rates(api, lat, lon, radius=radius)
+    if not bool(address):
+        lat = hass.config.latitude
+        lon = hass.config.longitude
+        address = None
+
+    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await hass.async_add_executor_job(_lookup_plans, plans)
     value = {}
 
@@ -311,7 +336,8 @@ def _get_entities(
             continue
         data.append(entity.entity_id)
 
+    data.sort
     if extra_entities:
-        data.extend(extra_entities)
+        data.insert(0, extra_entities)
 
     return data

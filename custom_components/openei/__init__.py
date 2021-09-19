@@ -13,8 +13,9 @@ import openeihttp
 from .const import (
     BINARY_SENSORS,
     CONF_API_KEY,
+    CONF_LOCATION,
+    CONF_MANUAL_PLAN,
     CONF_PLAN,
-    CONF_RADIUS,
     CONF_SENSOR,
     DOMAIN,
     PLATFORMS,
@@ -40,9 +41,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     updated_config = entry.data.copy()
 
-    if entry.data.get(CONF_SENSOR) == "(none)":
-        updated_config[CONF_SENSOR] = None
+    _LOGGER.debug("config_entry: %s", updated_config)
 
+    if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
+        updated_config.pop(CONF_SENSOR, None)
+
+    if CONF_MANUAL_PLAN in updated_config.keys() and updated_config[CONF_MANUAL_PLAN]:
+        updated_config[CONF_PLAN] = updated_config[CONF_MANUAL_PLAN]
+        updated_config.pop(CONF_MANUAL_PLAN, None)
+
+    _LOGGER.debug("updated_config: %s", updated_config)
     if updated_config != entry.data:
         hass.config_entries.async_update_entry(entry, data=updated_config)
 
@@ -55,11 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         raise ConfigEntryNotReady
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
-
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
     return True
 
@@ -113,25 +117,37 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed() from exception
 
 
-def get_sensors(hass, config):
+def get_sensors(hass, config) -> dict:
     api = config.data.get(CONF_API_KEY)
-    lat = hass.config.latitude
-    lon = hass.config.longitude
     plan = config.data.get(CONF_PLAN)
-    radius = config.data.get(CONF_RADIUS)
     meter = config.data.get(CONF_SENSOR)
-    readings = None
+    reading = None
 
     if meter:
-        readings = hass.states.get(meter).state
+        _LOGGER.debug("Using meter data from sensor: %s", meter)
+        reading = hass.states.get(meter)
+        if not reading:
+            reading = None
+            _LOGGER.warning("Sensor: %s is not valid.", meter)
+        else:
+            reading = reading.state
 
-    rate = openeihttp.Rates(api, lat, lon, plan, radius, readings)
+    rate = openeihttp.Rates(
+        api=api,
+        plan=plan,
+        reading=reading,
+    )
     rate.update()
     data = {}
 
     for sensor in SENSOR_TYPES:
         _sensor = {}
-        _sensor[sensor] = getattr(rate, sensor)
+        value = getattr(rate, sensor)
+        if isinstance(value, tuple):
+            _sensor[sensor] = value[0]
+            _sensor[f"{sensor}_uom"] = value[1]
+        else:
+            _sensor[sensor] = getattr(rate, sensor)
         data.update(_sensor)
 
     for sensor in BINARY_SENSORS:
@@ -145,18 +161,9 @@ def get_sensors(hass, config):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
-    unloaded = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, platform)
-                for platform in PLATFORMS
-            ]
-        )
-    )
-    if unloaded:
-        hass.data[DOMAIN].pop(entry.entry_id)
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
-    return unloaded
+    return unload_ok
 
 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
@@ -166,10 +173,6 @@ async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> Non
         return
 
     _LOGGER.debug("Attempting to reload entities from the %s integration", DOMAIN)
-
-    if config_entry.data == config_entry.options:
-        _LOGGER.debug("No changes detected not reloading entities.")
-        return
 
     new_data = config_entry.options.copy()
 
