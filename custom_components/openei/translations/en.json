@@ -3,10 +3,11 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nOmit address to use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
-                    "radius": "Radius in miles (optional)"
+                    "radius": "Radius in miles (optional)",
+                    "location": "City,State or Zip Code (optional)"
                 }
             },
             "user_2": {
@@ -18,10 +19,11 @@
             },
             "user_3": {
                 "title": "OpenEI (Step 3)",
-                "description": "Select your plan from the list. If you are unsure, check your utility bill.",
+                "description": "Select your plan from the list. If you are unsure, check your utility bill.\n\nManual plan will override the selected rate plan.",
                 "data": {
                     "rate_plan": "Rate Plan",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "sensor": "Energy sensor for Tier plans (optional)",
+                    "manual_plan": "Manually enter plan from OpenEI website (optional)"
                 }
             }                        
         },
@@ -36,10 +38,11 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/",
+                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/ \n\nEnter \"\" in address to clear it and use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
-                    "radius": "Radius in miles (optional)"
+                    "radius": "Radius in miles (optional)",
+                    "location": "City,State or Zip Code (optional)"
                 }
             },
             "user_2": {
@@ -51,10 +54,11 @@
             },
             "user_3": {
                 "title": "OpenEI (Step 3)",
-                "description": "Select your plan from the list. If you are unsure, check your utility bill.",
+                "description": "Select your plan from the list. If you are unsure, check your utility bill.\n\nManual plan will override the selected rate plan.",
                 "data": {
                     "rate_plan": "Rate Plan",
-                    "sensor": "Energy sensor for Tier plans (optional)"
+                    "sensor": "Energy sensor for Tier plans (optional)",
+                    "manual_plan": "Manually enter plan from OpenEI website (optional)"
                 }
             }  
         }

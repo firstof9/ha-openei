@@ -22,7 +22,7 @@ categories:
   - title: ":boom: Breaking Change :boom:"
     labels:
       - "breaking-change"
-  - title: ":zap: Enhancments :zap:"
+  - title: ":zap: Enhancements :zap:"
     labels:
       - "enhancement"
   - title: ":sparkles: New Features :sparkles:"

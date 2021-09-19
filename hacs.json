@@ -1,7 +1,8 @@
 {
     "name": "OpenEI",
-    "hacs": "1.6.0",
-    "domains": ["sensor"],
+    "domains": ["binary_sensor", "sensor"],
     "iot_class": "Cloud Polling",
-    "homeassistant": "0.118.0"
+    "homeassistant": "2021.8.0",
+    "zip_release": true,
+    "filename": "openei.zip"    
 }
