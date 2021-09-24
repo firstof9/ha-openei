@@ -1,4 +1,5 @@
 """Tests for init."""
+import pytest
 from unittest.mock import patch
 
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
@@ -7,7 +8,7 @@ from openeihttp import APIError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
-from tests.const import CONFIG_DATA, CONFIG_DATA_WITH_SENSOR
+from tests.const import CONFIG_DATA, CONFIG_DATA_MISSING_PLAN, CONFIG_DATA_WITH_SENSOR
 
 
 async def test_setup_entry(hass, mock_sensors, mock_api):
@@ -87,3 +88,17 @@ async def test_setup_entry_sensor_error(hass, mock_api, caplog):
 
     assert "Using meter data from sensor: sensor.fakesensor" in caplog.text
     assert "Sensor: sensor.fakesensor is not valid." in caplog.text
+
+
+async def test_setup_entry_sensor_plan_error(hass, mock_api, caplog):
+    """Test settting up entities."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA_MISSING_PLAN,
+    )
+
+    entry.add_to_hass(hass)
+    assert not await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert "Plan configuration missing." in caplog.text

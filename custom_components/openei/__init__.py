@@ -1,5 +1,4 @@
 """Custom integration to integrate OpenEI with Home Assistant."""
-import asyncio
 from datetime import datetime, timedelta
 import logging
 
@@ -13,7 +12,6 @@ import openeihttp
 from .const import (
     BINARY_SENSORS,
     CONF_API_KEY,
-    CONF_LOCATION,
     CONF_MANUAL_PLAN,
     CONF_PLAN,
     CONF_SENSOR,
@@ -46,9 +44,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
         updated_config.pop(CONF_SENSOR, None)
 
-    if CONF_MANUAL_PLAN in updated_config.keys() and updated_config[CONF_MANUAL_PLAN]:
-        updated_config[CONF_PLAN] = updated_config[CONF_MANUAL_PLAN]
-        updated_config.pop(CONF_MANUAL_PLAN, None)
+    if (
+        CONF_MANUAL_PLAN not in updated_config.keys()
+        or CONF_PLAN not in updated_config.keys()
+        or not any([updated_config[CONF_MANUAL_PLAN], updated_config[CONF_PLAN]])
+    ):
+        _LOGGER.error("Plan configuration missing.")
+        raise ConfigEntryNotReady
 
     _LOGGER.debug("updated_config: %s", updated_config)
     if updated_config != entry.data:
@@ -122,6 +124,9 @@ def get_sensors(hass, config) -> dict:
     plan = config.data.get(CONF_PLAN)
     meter = config.data.get(CONF_SENSOR)
     reading = None
+
+    if config.data.get(CONF_MANUAL_PLAN):
+        plan = config.data.get(CONF_MANUAL_PLAN)
 
     if meter:
         _LOGGER.debug("Using meter data from sensor: %s", meter)
