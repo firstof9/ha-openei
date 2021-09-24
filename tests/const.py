@@ -12,3 +12,9 @@ CONFIG_DATA_WITH_SENSOR = {
     "manual_plan": "manualfakerateplan",
     "sensor": "sensor.fakesensor",
 }
+
+CONFIG_DATA_MISSING_PLAN = {
+    "api_key": "fakeAPIKey",
+    "utility": "Fake Utility Co",
+    "sensor": "sensor.fakesensor",
+}
