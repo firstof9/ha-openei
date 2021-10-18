@@ -1,8 +1,10 @@
 """Sensor platform for integration_blueprint."""
 from typing import Any, Optional
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
@@ -16,7 +18,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     sensors = []
     for sensor in SENSOR_TYPES:
-        sensors.append(OpenEISensor(hass, sensor, entry, coordinator))
+        sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
 
     async_add_devices(sensors, False)
 
@@ -24,30 +26,23 @@ async def async_setup_entry(hass, entry, async_add_devices):
 class OpenEISensor(CoordinatorEntity, SensorEntity):
     """OpenEI Sensor class."""
 
-    def __init__(self, hass, sensor_type, entry, coordinator) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        sensor_description: SensorEntityDescription,
+        entry: ConfigEntry,
+        coordinator: str,
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.hass = hass
-        self._name = sensor_type
+        self._name = sensor_description.name
         self._unique_id = entry.entry_id
         self._config = entry
         self.coordinator = coordinator
-        self._device_class = SENSOR_TYPES[self._name][3]
 
-    @property
-    def unique_id(self) -> str:
-        """Return a unique, Home Assistant friendly identifier for this entity."""
-        return f"{self._name}_{self._unique_id}"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"{slugify(self._config.title)}_{SENSOR_TYPES[self._name][0]}"
-
-    @property
-    def icon(self) -> str:
-        """Return the icon of the sensor."""
-        return SENSOR_TYPES[self._name][1]
+        self._attr_name = f"{slugify(self._config.title)}_{self._name}"
+        self._attr_unique_id = f"{self._name}_{self._unique_id}"
 
     @property
     def native_value(self) -> Any:
@@ -74,8 +69,3 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
         return attrs
-
-    @property
-    def device_class(self):
-        """Return the device class of the sensor."""
-        return self._device_class
