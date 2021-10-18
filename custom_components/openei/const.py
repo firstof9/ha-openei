@@ -49,13 +49,19 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         icon="mdi:cash-multiple",
     ),
     "distributed_generation": SensorEntityDescription(
-        key="distributed_generation", name="Distributed Generation", icon="mdi:gauge"
+        key="distributed_generation",
+        name="Distributed Generation",
+        icon="mdi:gauge",
     ),
     "rate_name": SensorEntityDescription(
-        key="rate_name", name="Plan Name", icon="mdi:tag"
+        key="rate_name",
+        name="Plan Name",
+        icon="mdi:tag",
     ),
     "all_rates": SensorEntityDescription(
-        key="all_rates", name="All Listed Rates", icon="mdi:format-list-bulleted"
+        key="all_rates",
+        name="All Listed Rates",
+        icon="mdi:format-list-bulleted",
     ),
     "monthly_tier_rate": SensorEntityDescription(
         key="monthly_tier_rate",
@@ -63,7 +69,9 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         icon="mdi:cash-multiple",
     ),
     "mincharge": SensorEntityDescription(
-        key="mincharge", name="Minimum Charge", icon="mdi:cash-multiple"
+        key="mincharge",
+        name="Minimum Charge",
+        icon="mdi:cash-multiple",
     ),
 }
 
