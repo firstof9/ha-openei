@@ -37,25 +37,26 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self.hass = hass
         self._name = sensor_description.name
+        self._key = sensor_description.key
         self._unique_id = entry.entry_id
         self._config = entry
         self.coordinator = coordinator
 
         self._attr_name = f"{slugify(self._config.title)}_{self._name}"
-        self._attr_unique_id = f"{self._name}_{self._unique_id}"
+        self._attr_unique_id = f"{self._key}_{self._unique_id}"
 
     @property
     def native_value(self) -> Any:
         """Return the value of the sensor."""
-        return self.coordinator.data.get(self._name)
+        return self.coordinator.data.get(self._key)
 
     @property
     def native_unit_of_measurement(self) -> Any:
         """Return the unit of measurement."""
-        if self._name in ["current_rate", "monthly_tier_rate"]:
+        if self._key in ["current_rate", "monthly_tier_rate"]:
             return f"{self.hass.config.currency}/kWh"
-        if f"{self._name}_uom" in self.coordinator.data:
-            return self.coordinator.data.get(f"{self._name}_uom")
+        if f"{self._key}_uom" in self.coordinator.data:
+            return self.coordinator.data.get(f"{self._key}_uom")
         return None
 
     @property
