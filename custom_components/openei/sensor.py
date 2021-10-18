@@ -40,6 +40,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         self._key = sensor_description.key
         self._unique_id = entry.entry_id
         self._config = entry
+        self._icon = sensor_description.icon
         self.coordinator = coordinator
 
         self._attr_name = f"{slugify(self._config.title)}_{self._name}"
@@ -70,3 +71,8 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
         return attrs
+
+    @property
+    def icon(self) -> str:
+        """Return the icon."""
+        return self._icon
