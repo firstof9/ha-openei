@@ -66,7 +66,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         return self.coordinator.last_update_success
 
     @property
-    def device_state_attributes(self) -> Optional[dict]:
+    def extra_state_attributes(self) -> Optional[dict]:
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
