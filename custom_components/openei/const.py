@@ -88,7 +88,7 @@ BINARY_SENSORS: Final[dict[str, BinarySensorEntityDescription]] = {
     "approval": BinarySensorEntityDescription(
         name="Approval",
         key="approval",
-        icon="mdi:check"
+        icon="mdi:check",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
