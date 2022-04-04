@@ -1,6 +1,12 @@
 """Constants for integration_blueprint."""
 from __future__ import annotations
-from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntityDescription,
+)
+from homeassistant.components.sensor import (
+    SensorEntityDescription,
+)
+from homeassistant.helpers.entity import EntityCategory
 
 from typing import Final
 
@@ -52,6 +58,7 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="distributed_generation",
         name="Distributed Generation",
         icon="mdi:gauge",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "rate_name": SensorEntityDescription(
         key="rate_name",
@@ -62,6 +69,7 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="all_rates",
         name="All Listed Rates",
         icon="mdi:format-list-bulleted",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "monthly_tier_rate": SensorEntityDescription(
         key="monthly_tier_rate",
@@ -72,9 +80,15 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="mincharge",
         name="Minimum Charge",
         icon="mdi:cash-multiple",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
 
-BINARY_SENSORS = {
-    "approval": ["Approval", "mdi:check", None, None],
+BINARY_SENSORS: Final[dict[str, BinarySensorEntityDescription]] = {
+    "approval": BinarySensorEntityDescription(
+        name="Approval",
+        key="approval",
+        icon="mdi:check"
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
 }

@@ -1,5 +1,7 @@
 """Binary sensor platform for OpenEI."""
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
@@ -37,3 +39,13 @@ class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def name(self):
         """Return the name of the binary_sensor."""
         return f"{slugify(self._config.title)}_{BINARY_SENSORS[self._name][0]}"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device registry information."""
+        return DeviceInfo(
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={(DOMAIN, self._config.entry_id)},
+            manufacturer="OpenEI",
+            name="OpenEI",
+        )
