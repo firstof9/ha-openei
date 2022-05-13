@@ -8,5 +8,5 @@
   "config_flow": true,
   "codeowners": ["@firstof9"],
   "requirements": ["python-openei==0.1.18"],
-  "version": "0.1.7"
+  "version": "0.1.8"
 }
