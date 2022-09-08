@@ -1,6 +1,5 @@
 {
     "name": "OpenEI",
-    "iot_class": "Cloud Polling",
     "homeassistant": "2021.8.0",
     "zip_release": true,
     "filename": "openei.zip"    
