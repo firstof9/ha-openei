@@ -1,4 +1,5 @@
 {
+  "domain": "openei",
   "name": "OpenEI Utility Rates",
   "documentation": "https://github.com/firstof9/ha-openei",
   "issue_tracker": "https://github.com/firstof9/ha-openei/issues",
