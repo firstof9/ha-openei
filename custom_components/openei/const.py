@@ -54,7 +54,7 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         name="Current Energy Rate",
         icon="mdi:cash-multiple",
     ),
-    "current_rate": SensorEntityDescription(
+    "current_adjustment": SensorEntityDescription(
         key="current_adjustment",
         name="Current Energy Adjustment",
         icon="mdi:cash-multiple",
