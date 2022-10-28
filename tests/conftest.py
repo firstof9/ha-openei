@@ -1,5 +1,6 @@
 """Test configurations."""
 from unittest.mock import patch
+import openeihttp
 
 import pytest
 
@@ -54,3 +55,10 @@ def mock_get_sensors():
             "mincharge_uom": "$/month",
         }
     yield mock_sensors
+
+@pytest.fixture(name="mock_sensors_err")
+def mock_sensors_api_error():
+    """Mock of get sensors function."""
+    with patch("custom_components.openei.get_sensors") as mock_sensors:
+        mock_sensors.side_effect = openeihttp.RateLimit("Error")
+        yield mock_sensors
