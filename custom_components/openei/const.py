@@ -74,7 +74,6 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="all_rates",
         name="All Listed Rates",
         icon="mdi:format-list-bulleted",
-        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "monthly_tier_rate": SensorEntityDescription(
         key="monthly_tier_rate",

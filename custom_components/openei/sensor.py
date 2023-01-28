@@ -20,6 +20,8 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     sensors = []
     for sensor in SENSOR_TYPES:
+        if sensor == "all_rates":
+            continue
         sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
 
     async_add_devices(sensors, False)
@@ -72,6 +74,8 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
+        if self._key == "current_rate":
+            attrs["all_rates"] = self.coordinator.data.get("all_rates")
         return attrs
 
     @property
