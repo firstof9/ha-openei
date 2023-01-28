@@ -7,6 +7,8 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize(
     "input_1,step_id_2,input_2,step_id_3,input_3,title,data",
