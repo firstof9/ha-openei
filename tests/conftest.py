@@ -26,6 +26,7 @@ def mock_api():
         mock_api.return_value.lookup_plans = (
             '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
         )
+        mock_api.return_value.all_rates = [ 0.24477, 0.007 ]
 
         yield mock_api
 
