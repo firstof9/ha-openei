@@ -12,6 +12,8 @@ from openeihttp import RateLimit
 from custom_components.openei.const import DOMAIN
 from tests.const import CONFIG_DATA, CONFIG_DATA_MISSING_PLAN, CONFIG_DATA_WITH_SENSOR
 
+pytestmark = pytest.mark.asyncio
+
 async def test_setup_entry(hass, mock_sensors, mock_api):
     """Test settting up entities."""
     entry = MockConfigEntry(
