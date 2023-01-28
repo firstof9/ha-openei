@@ -53,6 +53,7 @@ def mock_get_sensors():
             "rate_name": "Fake Test Rate",
             "mincharge": 10,
             "mincharge_uom": "$/month",
+            "all_rates": [ 0.24477, 0.007 ],
         }
     yield mock_sensors
 

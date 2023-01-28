@@ -6,6 +6,7 @@ from custom_components.openei.const import DOMAIN
 from tests.const import CONFIG_DATA
 
 FAKE_MINCHARGE_SENSOR = "sensor.fake_utility_co_minimum_charge"
+FAKE_CURRENT_RATE_SENSOR = "sensor.fake_utility_co_current_rate"
 
 
 async def test_sensors(hass, mock_sensors, mock_api):
@@ -24,3 +25,8 @@ async def test_sensors(hass, mock_sensors, mock_api):
     assert state is not None
     assert state.state == "10"
     assert state.attributes["unit_of_measurement"] == "$/month"
+
+    state = hass.states.get(FAKE_CURRENT_RATE_SENSOR)
+    assert state is not None
+    assert state.state == "0.24477"
+    assert state.attributes["all_rates"] == [ 0.24477, 0.007 ]
