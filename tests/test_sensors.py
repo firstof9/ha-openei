@@ -1,4 +1,5 @@
 """Tests for sensors."""
+import pytest
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -6,6 +7,8 @@ from custom_components.openei.const import DOMAIN
 from tests.const import CONFIG_DATA
 
 FAKE_MINCHARGE_SENSOR = "sensor.fake_utility_co_minimum_charge"
+
+pytestmark = pytest.mark.asyncio
 
 
 async def test_sensors(hass, mock_sensors, mock_api):
