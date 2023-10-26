@@ -8,7 +8,8 @@ jobs:
     runs-on: "ubuntu-latest"
     name: Validate
     steps:
-        - uses: "actions/checkout@v2"
+        - name: 📥 Checkout the repository
+          uses: actions/checkout@v3.5.3
 
         - name: HACS validation
           uses: "hacs/action@main"
@@ -23,26 +24,38 @@ jobs:
     runs-on: "ubuntu-latest"
     name: Check style formatting
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "actions/setup-python@v1"
-        with:
-          python-version: "3.x"
-      - run: python3 -m pip install black
-      - run: black .
+        - name: 📥 Checkout the repository
+          uses: actions/checkout@v3.5.3
+        - name: 🛠️ Set up Python
+          uses: actions/setup-python@v4.6.1
+          with:
+            python-version: "3.x"
+        - run: python3 -m pip install black
+        - run: black .
 
   tests:
     runs-on: "ubuntu-latest"
     name: Run tests
+    strategy:
+      matrix:
+        python-version:
+          # - "3.10"
+          - "3.11"
+
     steps:
-      - name: Check out code from GitHub
-        uses: "actions/checkout@v2"
-      - name: Setup Python
-        uses: "actions/setup-python@v1"
+      - name: 📥 Checkout the repository
+        uses: actions/checkout@v3.5.3
+      - name: 🛠️ Set up Python
+        uses: actions/setup-python@v4.6.1
         with:
-          python-version: "3.8"
-      - name: Install requirements
+          fetch-depth: 2      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4.6.1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: 📦 Install requirements
         run: python3 -m pip install -r requirements_tests.txt
-      - name: Run tests
+      - name: 🏃 Run tests
         run: |
           pytest \
             -qq \
@@ -54,5 +67,5 @@ jobs:
             -p no:sugar \
             --cov-report=xml \
             tests
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+      - name: 📤 Upload coverage report
+        uses: codecov/codecov-action@v3.1.1
