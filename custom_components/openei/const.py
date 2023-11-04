@@ -54,6 +54,11 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         name="Current Energy Rate",
         icon="mdi:cash-multiple",
     ),
+    "current_adjustment": SensorEntityDescription(
+        key="current_adjustment",
+        name="Current Energy Adjustment",
+        icon="mdi:cash-multiple",
+    ),    
     "distributed_generation": SensorEntityDescription(
         key="distributed_generation",
         name="Distributed Generation",
@@ -69,7 +74,6 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="all_rates",
         name="All Listed Rates",
         icon="mdi:format-list-bulleted",
-        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "monthly_tier_rate": SensorEntityDescription(
         key="monthly_tier_rate",

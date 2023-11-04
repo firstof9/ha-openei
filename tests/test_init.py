@@ -7,9 +7,12 @@ from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from openeihttp import APIError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from openeihttp import RateLimit
+
 from custom_components.openei.const import DOMAIN
 from tests.const import CONFIG_DATA, CONFIG_DATA_MISSING_PLAN, CONFIG_DATA_WITH_SENSOR
 
+pytestmark = pytest.mark.asyncio
 
 async def test_setup_entry(hass, mock_sensors, mock_api):
     """Test settting up entities."""
@@ -102,3 +105,16 @@ async def test_setup_entry_sensor_plan_error(hass, mock_api, caplog):
     assert not await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert "Plan configuration missing." in caplog.text
+
+async def test_rate_limit_error(hass, mock_sensors_err, caplog):
+    """Test settting up entities."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert "API Rate limit exceded, retrying later." in caplog.text

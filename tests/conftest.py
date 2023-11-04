@@ -1,5 +1,6 @@
 """Test configurations."""
 from unittest.mock import patch
+import openeihttp
 
 import pytest
 
@@ -25,6 +26,7 @@ def mock_api():
         mock_api.return_value.lookup_plans = (
             '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
         )
+        mock_api.return_value.all_rates = [ 0.24477, 0.007 ]
 
         yield mock_api
 
@@ -52,5 +54,13 @@ def mock_get_sensors():
             "rate_name": "Fake Test Rate",
             "mincharge": 10,
             "mincharge_uom": "$/month",
+            "all_rates": [ 0.24477, 0.007 ],
         }
     yield mock_sensors
+
+@pytest.fixture(name="mock_sensors_err")
+def mock_sensors_api_error():
+    """Mock of get sensors function."""
+    with patch("custom_components.openei.get_sensors") as mock_sensors:
+        mock_sensors.side_effect = openeihttp.RateLimit("Error")
+        yield mock_sensors

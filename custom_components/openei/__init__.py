@@ -103,6 +103,9 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
                 self._data = await self.hass.async_add_executor_job(
                     get_sensors, self.hass, self._config
                 )
+            except openeihttp.RateLimit:
+                _LOGGER.error("API Rate limit exceded, retrying later.")
+                self._data = {}
             except Exception as exception:
                 raise UpdateFailed() from exception
         return self._data
@@ -120,11 +123,15 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             self._data = await self.hass.async_add_executor_job(
                 get_sensors, self.hass, self._config
             )
+        except openeihttp.RateLimit:
+            _LOGGER.error("API Rate limit exceded, retrying later.")
+            self._data = {}
         except Exception as exception:
             raise UpdateFailed() from exception
 
 
 def get_sensors(hass, config) -> dict:
+    """Update sensor data."""
     api = config.data.get(CONF_API_KEY)
     plan = config.data.get(CONF_PLAN)
     meter = config.data.get(CONF_SENSOR)

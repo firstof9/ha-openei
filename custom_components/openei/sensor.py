@@ -20,6 +20,8 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     sensors = []
     for sensor in SENSOR_TYPES:
+        if sensor == "all_rates":
+            continue
         sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
 
     async_add_devices(sensors, False)
@@ -56,7 +58,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self) -> Any:
         """Return the unit of measurement."""
-        if self._key in ["current_rate", "monthly_tier_rate"]:
+        if self._key in ["current_adjustment","current_rate", "monthly_tier_rate"]:
             return f"{self.hass.config.currency}/kWh"
         if f"{self._key}_uom" in self.coordinator.data:
             return self.coordinator.data.get(f"{self._key}_uom")
@@ -72,6 +74,8 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
+        if self._key == "current_rate":
+            attrs["all_rates"] = self.coordinator.data.get("all_rates")
         return attrs
 
     @property
