@@ -160,7 +160,7 @@ def get_sensors(hass, config) -> dict:
     for sensor in SENSOR_TYPES:
         _sensor = {}
         value = getattr(rate, SENSOR_TYPES[sensor].key)
-        if isinstance(value, tuple):
+        if isinstance(value, tuple) and sensor is not "all_rates":
             _sensor[sensor] = value[0]
             _sensor[f"{sensor}_uom"] = value[1]
         else:
