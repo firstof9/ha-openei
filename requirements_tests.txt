@@ -3,3 +3,10 @@ python-openei==0.1.22
 pytest
 pytest-cov
 pytest-homeassistant-custom-component
+tox
+black
+flake8
+mypy
+pydocstyle
+isort
+pylint
