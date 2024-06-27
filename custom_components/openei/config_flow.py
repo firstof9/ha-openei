@@ -332,5 +332,5 @@ def _get_entities(
 
     if extra_entities:
         data.insert(0, extra_entities)
-
-    return data.sort
+    data.sort  # pylint: disable=pointless-statement
+    return data
