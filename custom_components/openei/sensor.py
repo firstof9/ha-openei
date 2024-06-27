@@ -1,4 +1,5 @@
 """Sensor platform for integration_blueprint."""
+
 from typing import Any, Optional
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -10,16 +11,15 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
-    """Setup sensor platform."""
+    """Set up sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
     sensors = []
-    for sensor in SENSOR_TYPES:
+    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
         if sensor == "all_rates":
             continue
         sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
@@ -58,7 +58,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self) -> Any:
         """Return the unit of measurement."""
-        if self._key in ["current_adjustment","current_rate", "monthly_tier_rate"]:
+        if self._key in ["current_adjustment", "current_rate", "monthly_tier_rate"]:
             return f"{self.hass.config.currency}/kWh"
         if f"{self._key}_uom" in self.coordinator.data:
             return self.coordinator.data.get(f"{self._key}_uom")

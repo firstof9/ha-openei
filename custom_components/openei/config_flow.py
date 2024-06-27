@@ -1,14 +1,15 @@
 """Adds config flow for Blueprint."""
+
 from __future__ import annotations
 
 import logging
 from typing import Any, Dict, List, Optional
 
+import openeihttp
+import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant, callback
-import openeihttp
-import voluptuous as vol
 
 from .const import (
     CONF_API_KEY,
@@ -70,6 +71,7 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
+        """Enable option flow."""
         return OpenEIOptionsFlowHandler(config_entry)
 
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
@@ -77,7 +79,7 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         defaults = {}
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema_step_1(self.hass, user_input, defaults),
+            data_schema=_get_schema_step_1(user_input, defaults),
             errors=self._errors,
         )
 
@@ -87,9 +89,7 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         utility_list = await _get_utility_list(self.hass, self._data)
         return self.async_show_form(
             step_id="user_2",
-            data_schema=_get_schema_step_2(
-                self.hass, self._data, defaults, utility_list
-            ),
+            data_schema=_get_schema_step_2(self._data, defaults, utility_list),
             errors=self._errors,
         )
 
@@ -151,7 +151,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema_step_1(self.hass, user_input, self._data),
+            data_schema=_get_schema_step_1(user_input, self._data),
             errors=self._errors,
         )
 
@@ -160,9 +160,7 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
         utility_list = await _get_utility_list(self.hass, self._data)
         return self.async_show_form(
             step_id="user_2",
-            data_schema=_get_schema_step_2(
-                self.hass, user_input, self._data, utility_list
-            ),
+            data_schema=_get_schema_step_2(user_input, self._data, utility_list),
             errors=self._errors,
         )
 
@@ -179,12 +177,10 @@ class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
 
 
 def _get_schema_step_1(
-    hass: HomeAssistant,
     user_input: Optional[Dict[str, Any]],
     default_dict: Dict[str, Any],
-    entry_id: str = None,
 ) -> vol.Schema:
-    """Gets a schema using the default_dict as a backup."""
+    """Get a schema using the default_dict as a backup."""
     if user_input is None:
         user_input = {}
 
@@ -195,7 +191,7 @@ def _get_schema_step_1(
         default_dict[CONF_LOCATION] = ""
 
     def _get_default(key: str, fallback_default: Any = None) -> None:
-        """Gets default value for key."""
+        """Get default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
     return vol.Schema(
@@ -210,18 +206,16 @@ def _get_schema_step_1(
 
 
 def _get_schema_step_2(
-    hass: HomeAssistant,
     user_input: Optional[Dict[str, Any]],
     default_dict: Dict[str, Any],
     utility_list: list,
-    entry_id: str = None,
 ) -> vol.Schema:
-    """Gets a schema using the default_dict as a backup."""
+    """Get a schema using the default_dict as a backup."""
     if user_input is None:
         user_input = {}
 
     def _get_default(key: str, fallback_default: Any = None) -> None:
-        """Gets default value for key."""
+        """Get default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
     return vol.Schema(
@@ -238,9 +232,8 @@ def _get_schema_step_3(
     user_input: Optional[Dict[str, Any]],
     default_dict: Dict[str, Any],
     plan_list: list,
-    entry_id: str = None,
 ) -> vol.Schema:
-    """Gets a schema using the default_dict as a backup."""
+    """Get a schema using the default_dict as a backup."""
     if user_input is None:
         user_input = {}
 
@@ -248,7 +241,7 @@ def _get_schema_step_3(
         default_dict.pop(CONF_SENSOR, None)
 
     def _get_default(key: str, fallback_default: Any = None) -> Any | None:
-        """Gets default value for key."""
+        """Get default value for key."""
         return user_input.get(key, default_dict.get(key, fallback_default))
 
     return vol.Schema(
@@ -290,7 +283,6 @@ async def _get_utility_list(hass, user_input) -> list | None:
 
 async def _get_plan_list(hass, user_input) -> list | None:
     """Return list of rate plans by lat/lon."""
-
     lat = None
     lon = None
     address = user_input[CONF_LOCATION]
@@ -334,12 +326,11 @@ def _get_entities(
     for entity in hass.data[domain].entities:
         if not hasattr(entity, "device_class"):
             continue
-        elif search is not None and not entity.device_class == search:
+        if search is not None and not entity.device_class == search:
             continue
         data.append(entity.entity_id)
 
-    data.sort
     if extra_entities:
         data.insert(0, extra_entities)
-
+    data.sort  # pylint: disable=pointless-statement
     return data

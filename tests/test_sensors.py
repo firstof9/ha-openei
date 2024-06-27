@@ -1,4 +1,5 @@
 """Tests for sensors."""
+
 import pytest
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -32,4 +33,4 @@ async def test_sensors(hass, mock_sensors, mock_api):
     state = hass.states.get(FAKE_CURRENT_RATE_SENSOR)
     assert state is not None
     assert state.state == "0.24477"
-    assert state.attributes["all_rates"] == [ 0.24477, 0.007 ]
+    assert state.attributes["all_rates"] == [0.24477, 0.007]

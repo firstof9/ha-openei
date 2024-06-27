@@ -1,3 +1,5 @@
+"""Constants for OpenEI integration tests."""
+
 CONFIG_DATA = {
     "api_key": "fakeAPIKey",
     "utility": "Fake Utility Co",

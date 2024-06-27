@@ -1,13 +1,14 @@
 """Custom integration to integrate OpenEI with Home Assistant."""
-from datetime import datetime, timedelta
-import logging
 
+import logging
+from datetime import datetime, timedelta
+
+import openeihttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-import openeihttp
 
 from .const import (
     BINARY_SENSORS,
@@ -26,7 +27,9 @@ SCAN_INTERVAL = timedelta(minutes=15)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup(hass: HomeAssistant, config: Config):
+async def async_setup(  # pylint: disable-next=unused-argument
+    hass: HomeAssistant, config: Config
+):
     """Set up this integration using YAML is not supported."""
     return True
 
@@ -67,11 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         raise ConfigEntryNotReady
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
-
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
@@ -110,7 +109,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
                 raise UpdateFailed() from exception
         return self._data
 
-    async def _async_refresh_data(self, data=None) -> None:
+    async def _async_refresh_data(self) -> None:
         """Update data via library."""
         delta = timedelta(hours=1)
         now = datetime.now()
@@ -157,7 +156,7 @@ def get_sensors(hass, config) -> dict:
     rate.update()
     data = {}
 
-    for sensor in SENSOR_TYPES:
+    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
         _sensor = {}
         value = getattr(rate, SENSOR_TYPES[sensor].key)
         if isinstance(value, tuple):
@@ -167,7 +166,7 @@ def get_sensors(hass, config) -> dict:
             _sensor[sensor] = getattr(rate, SENSOR_TYPES[sensor].key)
         data.update(_sensor)
 
-    for sensor in BINARY_SENSORS:
+    for sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
         _sensor = {}
         _sensor[sensor] = getattr(rate, sensor)
         data.update(_sensor)
@@ -185,7 +184,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Update listener."""
-
     if not config_entry.options:
         return
 

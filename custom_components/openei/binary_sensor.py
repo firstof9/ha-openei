@@ -1,7 +1,10 @@
 """Binary sensor platform for OpenEI."""
-from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorEntityDescription
+
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntity,
+    BinarySensorEntityDescription,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -11,12 +14,14 @@ from .const import BINARY_SENSORS, DOMAIN
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
-    """Setup binary_sensor platform."""
+    """Set up binary_sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
     binary_sensors = []
-    for binary_sensor in BINARY_SENSORS:
-        binary_sensors.append(OpenEIBinarySensor(hass, BINARY_SENSORS[binary_sensor], entry, coordinator))
+    for binary_sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
+        binary_sensors.append(
+            OpenEIBinarySensor(BINARY_SENSORS[binary_sensor], entry, coordinator)
+        )
 
     async_add_devices(binary_sensors, False)
 
@@ -26,7 +31,6 @@ class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
     def __init__(
         self,
-        hass: HomeAssistant,
         sensor_description: BinarySensorEntityDescription,
         entry: ConfigEntry,
         coordinator: str,
