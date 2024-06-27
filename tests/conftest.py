@@ -28,6 +28,11 @@ def skip_notifications_fixture():
     ):
         yield
 
+@pytest.fixture(name="mock_call_later", autouse=True)
+def mock_call_later_fixture():
+    """Mock async_call_later."""
+    with patch("custom_components.openei.async_call_later"):
+        yield
 
 @pytest.fixture(name="mock_api")
 def mock_api():
