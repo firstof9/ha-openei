@@ -1,5 +1,9 @@
 """Binary sensor platform for OpenEI."""
-from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorEntityDescription
+
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntity,
+    BinarySensorEntityDescription,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -16,7 +20,9 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     binary_sensors = []
     for binary_sensor in BINARY_SENSORS:
-        binary_sensors.append(OpenEIBinarySensor(hass, BINARY_SENSORS[binary_sensor], entry, coordinator))
+        binary_sensors.append(
+            OpenEIBinarySensor(hass, BINARY_SENSORS[binary_sensor], entry, coordinator)
+        )
 
     async_add_devices(binary_sensors, False)
 

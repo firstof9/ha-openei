@@ -1,4 +1,5 @@
 """Custom integration to integrate OpenEI with Home Assistant."""
+
 from datetime import datetime, timedelta
 import logging
 

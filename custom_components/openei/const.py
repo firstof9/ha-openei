@@ -1,4 +1,5 @@
 """Constants for integration_blueprint."""
+
 from __future__ import annotations
 from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
@@ -58,7 +59,7 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         key="current_adjustment",
         name="Current Energy Adjustment",
         icon="mdi:cash-multiple",
-    ),    
+    ),
     "distributed_generation": SensorEntityDescription(
         key="distributed_generation",
         name="Distributed Generation",
