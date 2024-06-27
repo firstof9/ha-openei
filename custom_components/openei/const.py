@@ -1,15 +1,12 @@
-"""Constants for integration_blueprint."""
+"""Constants for OpenEI integration."""
 
 from __future__ import annotations
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntityDescription,
-)
-from homeassistant.components.sensor import (
-    SensorEntityDescription,
-)
-from homeassistant.helpers.entity import EntityCategory
 
 from typing import Final
+
+from homeassistant.components.binary_sensor import BinarySensorEntityDescription
+from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.helpers.entity import EntityCategory
 
 # Base component constants
 NAME = "OpenEI"

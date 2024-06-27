@@ -11,16 +11,15 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
-    """Setup sensor platform."""
+    """Set up sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
     sensors = []
-    for sensor in SENSOR_TYPES:
+    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
         if sensor == "all_rates":
             continue
         sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
