@@ -109,8 +109,9 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
                 raise UpdateFailed() from exception
         return self._data
 
-    async def _async_refresh_data(self) -> None:
+    async def _async_refresh_data(self, data=None) -> None:
         """Update data via library."""
+        _LOGGER.debug("_async_refresh_data data: %s", str(data))
         delta = timedelta(hours=1)
         now = datetime.now()
         next_hour = (now + delta).replace(microsecond=0, second=1, minute=0)
