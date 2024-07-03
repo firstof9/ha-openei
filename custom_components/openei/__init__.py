@@ -9,6 +9,7 @@ from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from requests.exceptions import JSONDecodeError
 
 from .const import (
     BINARY_SENSORS,
@@ -154,8 +155,16 @@ def get_sensors(hass, config) -> dict:
         plan=plan,
         reading=reading,
     )
-    rate.update()
     data = {}
+
+    try:
+        rate.update()
+    except JSONDecodeError as err:
+        _LOGGER.error("Problem decoding server response: %s", err)
+        return data
+    except Exception as err:
+        _LOGGER.error("Problem getting data from server: %s", err)
+        return data
 
     for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
         _sensor = {}
