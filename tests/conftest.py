@@ -50,6 +50,7 @@ def mock_api():
             '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
         )
         mock_api.return_value.all_rates = [0.24477, 0.007]
+        mock_api.return_value.current_rate_structure = 4
 
         yield mock_api
 
