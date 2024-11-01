@@ -1,5 +1,5 @@
 -r requirements_dev.txt
-python-openei==0.1.22
+python-openei==0.1.24
 pytest
 pytest-cov
 pytest-homeassistant-custom-component
