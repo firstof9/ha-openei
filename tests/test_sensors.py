@@ -9,7 +9,9 @@ from tests.const import CONFIG_DATA
 
 FAKE_MINCHARGE_SENSOR = "sensor.fake_utility_co_minimum_charge"
 FAKE_CURRENT_RATE_SENSOR = "sensor.fake_utility_co_current_energy_rate"
-FAKE_CURRENT_RATE_STRUCTURE_SENSOR = "sensor.fake_utility_co_current_rate_structure"
+FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
+    "sensor.fake_utility_co_current_energy_rate_structure"
+)
 
 pytestmark = pytest.mark.asyncio
 

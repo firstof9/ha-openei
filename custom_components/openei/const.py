@@ -68,9 +68,9 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         name="Plan Name",
         icon="mdi:tag",
     ),
-    "current_rate_structure": SensorEntityDescription(
-        key="current_rate_structure",
-        name="Current Rate Structure",
+    "current_energy_rate_structure": SensorEntityDescription(
+        key="current_energy_rate_structure",
+        name="Current Energy Rate Structure",
         icon="mdi:tag",
     ),
     "all_rates": SensorEntityDescription(
