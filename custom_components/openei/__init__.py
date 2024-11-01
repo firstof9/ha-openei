@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import openeihttp
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Config, HomeAssistant
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -28,7 +28,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup(  # pylint: disable-next=unused-argument
-    hass: HomeAssistant, config: Config
+    hass: HomeAssistant, config: ConfigEntry
 ):
     """Set up this integration using YAML is not supported."""
     return True
