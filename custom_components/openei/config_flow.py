@@ -9,7 +9,7 @@ import openeihttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 
 from .const import (
     CONF_API_KEY,

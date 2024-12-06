@@ -157,7 +157,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
                 await rate.update()
             except openeihttp.RateLimit:
                 _LOGGER.error("API Rate limit exceded, retrying later.")
-                if self._data == {}:
+                if not self._data:
                     # 3 hour retry if we have no data
                     self._rate_limit_count = 3
                 else:
