@@ -9,7 +9,7 @@ import openeihttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 
 from .const import (
     CONF_API_KEY,
@@ -68,11 +68,11 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return await self._show_config_form_3(user_input)
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry):
-        """Enable option flow."""
-        return OpenEIOptionsFlowHandler(config_entry)
+    # @staticmethod
+    # @callback
+    # def async_get_options_flow(config_entry):
+    #     """Enable option flow."""
+    #     return OpenEIOptionsFlowHandler(config_entry)
 
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
@@ -104,76 +104,76 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
 
-class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
-    """Blueprint config flow options handler."""
+# class OpenEIOptionsFlowHandler(config_entries.OptionsFlow):
+#     """Blueprint config flow options handler."""
 
-    def __init__(self, config_entry):
-        """Initialize OpenEI options flow."""
-        self.config_entry = config_entry
-        self._data = dict(config_entry.data)
-        self._errors = {}
+#     def __init__(self, config_entry):
+#         """Initialize OpenEI options flow."""
+#         self.config_entry = config_entry
+#         self._data = dict(config_entry.data)
+#         self._errors = {}
 
-    async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
-        """Manage the options."""
-        return await self.async_step_user()
+#     async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
+#         """Manage the options."""
+#         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None):
-        """Handle a flow initialized by the user."""
-        if user_input is not None:
-            if user_input[CONF_LOCATION] == '""':
-                user_input[CONF_LOCATION] = ""
-            self._data.update(user_input)
-            return await self.async_step_user_2()
+#     async def async_step_user(self, user_input=None):
+#         """Handle a flow initialized by the user."""
+#         if user_input is not None:
+#             if user_input[CONF_LOCATION] == '""':
+#                 user_input[CONF_LOCATION] = ""
+#             self._data.update(user_input)
+#             return await self.async_step_user_2()
 
-        return await self._show_config_form(user_input)
+#         return await self._show_config_form(user_input)
 
-    async def async_step_user_2(self, user_input=None):
-        """Handle a flow initialized by the user."""
-        _LOGGER.debug("data: %s", self._data)
-        if user_input is not None:
-            self._data.update(user_input)
-            return await self.async_step_user_3()
+#     async def async_step_user_2(self, user_input=None):
+#         """Handle a flow initialized by the user."""
+#         _LOGGER.debug("data: %s", self._data)
+#         if user_input is not None:
+#             self._data.update(user_input)
+#             return await self.async_step_user_3()
 
-        return await self._show_config_form_2(user_input)
+#         return await self._show_config_form_2(user_input)
 
-    async def async_step_user_3(self, user_input=None):
-        """Handle a flow initialized by the user."""
-        _LOGGER.debug("data: %s", self._data)
-        if user_input is not None:
-            if user_input[CONF_MANUAL_PLAN] == '""':
-                user_input[CONF_MANUAL_PLAN] = ""
-            self._data.update(user_input)
-            return self.async_create_entry(title="", data=self._data)
+#     async def async_step_user_3(self, user_input=None):
+#         """Handle a flow initialized by the user."""
+#         _LOGGER.debug("data: %s", self._data)
+#         if user_input is not None:
+#             if user_input[CONF_MANUAL_PLAN] == '""':
+#                 user_input[CONF_MANUAL_PLAN] = ""
+#             self._data.update(user_input)
+#             return self.async_create_entry(title="", data=self._data)
 
-        return await self._show_config_form_3(user_input)
+#         return await self._show_config_form_3(user_input)
 
-    async def _show_config_form(self, user_input: Optional[Dict[str, Any]]):
-        """Show the configuration form to edit location data."""
-        return self.async_show_form(
-            step_id="user",
-            data_schema=_get_schema_step_1(user_input, self._data),
-            errors=self._errors,
-        )
+#     async def _show_config_form(self, user_input: Optional[Dict[str, Any]]):
+#         """Show the configuration form to edit location data."""
+#         return self.async_show_form(
+#             step_id="user",
+#             data_schema=_get_schema_step_1(user_input, self._data),
+#             errors=self._errors,
+#         )
 
-    async def _show_config_form_2(self, user_input: Optional[Dict[str, Any]]):
-        """Show the configuration form to edit location data."""
-        utility_list = await _get_utility_list(self.hass, self._data)
-        return self.async_show_form(
-            step_id="user_2",
-            data_schema=_get_schema_step_2(user_input, self._data, utility_list),
-            errors=self._errors,
-        )
+#     async def _show_config_form_2(self, user_input: Optional[Dict[str, Any]]):
+#         """Show the configuration form to edit location data."""
+#         utility_list = await _get_utility_list(self.hass, self._data)
+#         return self.async_show_form(
+#             step_id="user_2",
+#             data_schema=_get_schema_step_2(user_input, self._data, utility_list),
+#             errors=self._errors,
+#         )
 
-    async def _show_config_form_3(self, user_input: Optional[Dict[str, Any]]):
-        """Show the configuration form to edit location data."""
-        plan_list = await _get_plan_list(self.hass, self._data)
-        return self.async_show_form(
-            step_id="user_3",
-            data_schema=_get_schema_step_3(
-                self.hass, user_input, self._data, plan_list
-            ),
-            errors=self._errors,
-        )
+#     async def _show_config_form_3(self, user_input: Optional[Dict[str, Any]]):
+#         """Show the configuration form to edit location data."""
+#         plan_list = await _get_plan_list(self.hass, self._data)
+#         return self.async_show_form(
+#             step_id="user_3",
+#             data_schema=_get_schema_step_3(
+#                 self.hass, user_input, self._data, plan_list
+#             ),
+#             errors=self._errors,
+#         )
 
 
 def _get_schema_step_1(
@@ -271,7 +271,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
         address = None
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
-    plans = await hass.async_add_executor_job(_lookup_plans, plans)
+    plans = await _lookup_plans(plans)
     utilities = []
 
     for utility in plans:
@@ -296,7 +296,7 @@ async def _get_plan_list(hass, user_input) -> list | None:
         address = None
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
-    plans = await hass.async_add_executor_job(_lookup_plans, plans)
+    plans = await _lookup_plans(plans)
     value = {}
 
     for plan in plans[utility]:
@@ -306,9 +306,9 @@ async def _get_plan_list(hass, user_input) -> list | None:
     return value
 
 
-def _lookup_plans(handler) -> list:
+async def _lookup_plans(handler) -> list:
     """Return list of utilities and plans."""
-    response = handler.lookup_plans()
+    response = await handler.lookup_plans()
     _LOGGER.debug("lookup_plans: %s", response)
     return response
 

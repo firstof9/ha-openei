@@ -83,6 +83,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         self.hass = hass
         self.interval = timedelta(seconds=30)
         self._data = {}
+        self._rate_limit_count = 0
 
         _LOGGER.debug("Data will be updated at the top of every hour.")
 
@@ -99,12 +100,11 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug("Next update in %s seconds.", wait_seconds)
             async_call_later(self.hass, wait_seconds, self._async_refresh_data)
             try:
-                self._data = await self.hass.async_add_executor_job(
-                    get_sensors, self.hass, self._config
-                )
+                await self.get_sensors()
             except openeihttp.RateLimit:
-                _LOGGER.error("API Rate limit exceded, retrying later.")
-                self._data = {}
+                pass
+            except AssertionError:
+                pass
             except Exception as exception:
                 raise UpdateFailed() from exception
         return self._data
@@ -120,60 +120,71 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Next update in %s seconds.", wait_seconds)
         async_call_later(self.hass, wait_seconds, self._async_refresh_data)
         try:
-            self._data = await self.hass.async_add_executor_job(
-                get_sensors, self.hass, self._config
-            )
+            await self.get_sensors()
         except openeihttp.RateLimit:
-            _LOGGER.error("API Rate limit exceded, retrying later.")
-            self._data = {}
+            pass
+        except AssertionError:
+            pass
         except Exception as exception:
             raise UpdateFailed() from exception
 
+    async def get_sensors(self) -> dict:
+        """Update sensor data."""
+        api = self._config.data.get(CONF_API_KEY)
+        plan = self._config.data.get(CONF_PLAN)
+        meter = self._config.data.get(CONF_SENSOR)
+        reading = None
 
-def get_sensors(hass, config) -> dict:
-    """Update sensor data."""
-    api = config.data.get(CONF_API_KEY)
-    plan = config.data.get(CONF_PLAN)
-    meter = config.data.get(CONF_SENSOR)
-    reading = None
+        if self._config.data.get(CONF_MANUAL_PLAN):
+            plan = self._config.data.get(CONF_MANUAL_PLAN)
 
-    if config.data.get(CONF_MANUAL_PLAN):
-        plan = config.data.get(CONF_MANUAL_PLAN)
+        if meter:
+            _LOGGER.debug("Using meter data from sensor: %s", meter)
+            reading = self.hass.states.get(meter)
+            if not reading:
+                reading = None
+                _LOGGER.warning("Sensor: %s is not valid.", meter)
+            else:
+                reading = reading.state
 
-    if meter:
-        _LOGGER.debug("Using meter data from sensor: %s", meter)
-        reading = hass.states.get(meter)
-        if not reading:
-            reading = None
-            _LOGGER.warning("Sensor: %s is not valid.", meter)
-        else:
-            reading = reading.state
+        rate = openeihttp.Rates(
+            api=api,
+            plan=plan,
+            reading=reading,
+        )
+        if self._rate_limit_count == 0:
+            try:
+                await rate.update()
+            except openeihttp.RateLimit:
+                _LOGGER.error("API Rate limit exceded, retrying later.")
+                if not self._data:
+                    # 3 hour retry if we have no data
+                    self._rate_limit_count = 3
+                else:
+                    # 6 hour retry after rate limited
+                    self._rate_limit_count = 6
+        elif self._rate_limit_count > 0:
+            self._rate_limit_count -= 1
 
-    rate = openeihttp.Rates(
-        api=api,
-        plan=plan,
-        reading=reading,
-    )
-    rate.update()
-    data = {}
+        data = {}
 
-    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
-        _sensor = {}
-        value = getattr(rate, SENSOR_TYPES[sensor].key)
-        if isinstance(value, tuple):
-            _sensor[sensor] = value[0]
-            _sensor[f"{sensor}_uom"] = value[1]
-        else:
-            _sensor[sensor] = getattr(rate, SENSOR_TYPES[sensor].key)
-        data.update(_sensor)
+        for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
+            _sensor = {}
+            value = getattr(rate, SENSOR_TYPES[sensor].key)
+            if isinstance(value, tuple):
+                _sensor[sensor] = value[0]
+                _sensor[f"{sensor}_uom"] = value[1]
+            else:
+                _sensor[sensor] = getattr(rate, SENSOR_TYPES[sensor].key)
+            data.update(_sensor)
 
-    for sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
-        _sensor = {}
-        _sensor[sensor] = getattr(rate, sensor)
-        data.update(_sensor)
+        for sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
+            _sensor = {}
+            _sensor[sensor] = getattr(rate, sensor)
+            data.update(_sensor)
 
-    _LOGGER.debug("DEBUG: %s", data)
-    return data
+        _LOGGER.debug("DEBUG: %s", data)
+        self._data = data
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

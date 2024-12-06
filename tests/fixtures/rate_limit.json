@@ -1,0 +1,6 @@
+{
+    "error": {
+        "code": "RATE_LIMIT",
+        "message": "You have exceeded your rate limit. Try again later or contact us at https://api.openei.org:443/contact/ for assistance"
+    }
+}
