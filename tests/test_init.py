@@ -1,20 +1,17 @@
 """Tests for init."""
 
-import pytest
+import logging
 import re
-from tests.common import load_fixture
 from unittest.mock import patch
 
+import pytest
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
-from openeihttp import APIError
+from openeihttp import APIError, RateLimit
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from openeihttp import RateLimit
-
-import logging
-
 from custom_components.openei.const import DOMAIN
+from tests.common import load_fixture
 from tests.const import CONFIG_DATA, CONFIG_DATA_MISSING_PLAN, CONFIG_DATA_WITH_SENSOR
 
 pytestmark = pytest.mark.asyncio
@@ -33,7 +30,7 @@ async def test_setup_entry(hass, mock_aioclient, caplog):
         status=200,
         body=load_fixture("plan_data.json"),
         repeat=True,
-    )      
+    )
 
     with caplog.at_level(logging.DEBUG):
 

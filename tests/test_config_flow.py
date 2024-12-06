@@ -1,12 +1,11 @@
 """Test OpenEI config flow."""
 
+import logging
 from unittest.mock import patch
 
 import pytest
 from homeassistant import config_entries, setup
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-
-import logging
 
 from custom_components.openei.const import DOMAIN
 

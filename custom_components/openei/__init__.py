@@ -122,9 +122,9 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             await self.get_sensors()
         except openeihttp.RateLimit:
-            pass           
+            pass
         except AssertionError:
-            pass        
+            pass
         except Exception as exception:
             raise UpdateFailed() from exception
 

@@ -1,14 +1,13 @@
 """Test configurations."""
 
-from .common import load_fixture
-from unittest.mock import patch
-import openeihttp
 import re
+from unittest.mock import patch
 
+import openeihttp
+import pytest
 from aioresponses import aioresponses
 
-import pytest
-
+from .common import load_fixture
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 
@@ -57,8 +56,8 @@ def mock_plandata(mock_aioclient):
         status=200,
         body=load_fixture("plan_data.json"),
         repeat=True,
-    )    
- 
+    )
+
 
 @pytest.fixture(name="mock_api_err")
 def mock_rate_limit(mock_aioclient):
@@ -68,7 +67,7 @@ def mock_rate_limit(mock_aioclient):
         status=200,
         body=load_fixture("rate_limit.json"),
         repeat=True,
-    )        
+    )
 
 
 @pytest.fixture(name="mock_api_config")
@@ -79,7 +78,7 @@ def mock_lookup(mock_aioclient):
         status=200,
         body=load_fixture("lookup.json"),
         repeat=True,
-    )        
+    )
 
 
 # @pytest.fixture(name="mock_api")

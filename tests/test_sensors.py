@@ -1,7 +1,6 @@
 """Tests for sensors."""
 
 import pytest
-
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
@@ -30,7 +29,7 @@ async def test_sensors(hass, mock_api):
 
     state = hass.states.get(FAKE_MINCHARGE_SENSOR)
     assert state is not None
-    assert state.state == 'unknown'
+    assert state.state == "unknown"
 
     state = hass.states.get(FAKE_CURRENT_RATE_SENSOR)
     assert state is not None
