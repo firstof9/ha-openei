@@ -1,12 +1,18 @@
 """Test configurations."""
 
+from .common import load_fixture
 from unittest.mock import patch
 import openeihttp
+import re
+
+from aioresponses import aioresponses
 
 import pytest
 
 
 pytest_plugins = "pytest_homeassistant_custom_component"
+
+TEST_PATTERN = r"^https://api\.openei\.org/utility_rates\?.*$"
 
 
 # This fixture enables loading custom integrations in all tests.
@@ -29,6 +35,13 @@ def skip_notifications_fixture():
         yield
 
 
+@pytest.fixture
+def mock_aioclient():
+    """Fixture to mock aioclient calls."""
+    with aioresponses() as m:
+        yield m
+
+
 @pytest.fixture(name="mock_call_later", autouse=True)
 def mock_call_later_fixture():
     """Mock async_call_later."""
@@ -37,34 +50,76 @@ def mock_call_later_fixture():
 
 
 @pytest.fixture(name="mock_api")
-def mock_api():
-    """Mock the library calls."""
-    with patch("custom_components.openei.openeihttp.Rates") as mock_api:
-        # mock_api = mock.Mock(spec=openeihttp.Rates)
-        mock_api.return_value.current_rate = 0.24477
-        mock_api.return_value.distributed_generation = "Net Metering"
-        mock_api.return_value.approval = True
-        mock_api.return_value.rate_name = 0.24477
-        mock_api.return_value.mincharge = (10, "$/month")
-        mock_api.return_value.lookup_plans = (
-            '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
-        )
-        mock_api.return_value.all_rates = [0.24477, 0.007]
-        mock_api.return_value.current_energy_rate_structure = 4
+def mock_plandata(mock_aioclient):
+    """Mock the status reply."""
+    mock_aioclient.get(
+        re.compile(TEST_PATTERN),
+        status=200,
+        body=load_fixture("plan_data.json"),
+        repeat=True,
+    )    
+ 
 
-        yield mock_api
+@pytest.fixture(name="mock_api_err")
+def mock_rate_limit(mock_aioclient):
+    """Mock the status reply."""
+    mock_aioclient.get(
+        re.compile(TEST_PATTERN),
+        status=200,
+        body=load_fixture("rate_limit.json"),
+        repeat=True,
+    )        
 
 
 @pytest.fixture(name="mock_api_config")
-def mock_api_config():
-    """Mock the library calls."""
-    with patch("custom_components.openei.config_flow.openeihttp.Rates") as mock_api:
-        mock_return = mock_api.return_value
-        mock_return.lookup_plans.return_value = {
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
-        }
+def mock_lookup(mock_aioclient):
+    """Mock the status reply."""
+    mock_aioclient.get(
+        re.compile(TEST_PATTERN),
+        status=200,
+        body=load_fixture("lookup.json"),
+        repeat=True,
+    )        
 
-        yield mock_return
+
+# @pytest.fixture(name="mock_api")
+# def mock_api():
+#     """Mock the library calls."""
+#     with patch("openeihttp.Rates") as mock_api:
+#         # mock_api = mock.Mock(spec=openeihttp.Rates)
+#         mock_api.return_value.current_rate = 0.24477
+#         mock_api.return_value.distributed_generation = "Net Metering"
+#         mock_api.return_value.approval = True
+#         mock_api.return_value.rate_name = 0.24477
+#         mock_api.return_value.mincharge = (10, "$/month")
+#         mock_api.return_value.lookup_plans = (
+#             '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
+#         )
+#         mock_api.return_value.all_rates = [0.24477, 0.007]
+#         mock_api.return_value.current_energy_rate_structure = 4
+
+#         yield mock_api
+
+
+# @pytest.fixture(name="mock_api_err")
+# def mock_api_err():
+#     """Mock the library calls."""
+#     with patch("openeihttp.Rates") as mock_api:
+#         mock_api.side_effect = openeihttp.RateLimit("Error")
+
+#         yield mock_api
+
+
+# @pytest.fixture(name="mock_api_config")
+# def mock_api_config():
+#     """Mock the library calls."""
+#     with patch("custom_components.openei.config_flow.openeihttp.Rates") as mock_api:
+#         mock_return = mock_api.return_value
+#         mock_return.lookup_plans.return_value = {
+#             "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
+#         }
+
+#         yield mock_return
 
 
 @pytest.fixture(name="mock_sensors")

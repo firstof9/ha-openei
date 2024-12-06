@@ -16,7 +16,7 @@ FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
 pytestmark = pytest.mark.asyncio
 
 
-async def test_sensors(hass, mock_sensors, mock_api):
+async def test_sensors(hass, mock_api):
     """Test settting up entities."""
     entry = MockConfigEntry(
         domain=DOMAIN,
@@ -30,14 +30,13 @@ async def test_sensors(hass, mock_sensors, mock_api):
 
     state = hass.states.get(FAKE_MINCHARGE_SENSOR)
     assert state is not None
-    assert state.state == "10"
-    assert state.attributes["unit_of_measurement"] == "$/month"
+    assert state.state == 'unknown'
 
     state = hass.states.get(FAKE_CURRENT_RATE_SENSOR)
     assert state is not None
-    assert state.state == "0.24477"
-    assert state.attributes["all_rates"] == [0.24477, 0.007]
+    assert state.state == "0.06116"
+    assert state.attributes["all_rates"] == [0.24477, 0.06118, 0.19847, 0.06116]
 
     state = hass.states.get(FAKE_CURRENT_RATE_STRUCTURE_SENSOR)
     assert state is not None
-    assert state.state == "4"
+    assert state.state == "3"

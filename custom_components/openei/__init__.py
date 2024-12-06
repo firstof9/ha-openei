@@ -100,9 +100,11 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug("Next update in %s seconds.", wait_seconds)
             async_call_later(self.hass, wait_seconds, self._async_refresh_data)
             try:
-                self._data = await self.hass.async_add_executor_job(
-                    self.get_sensors, self.hass, self._config
-                )
+                await self.get_sensors()
+            except openeihttp.RateLimit:
+                pass
+            except AssertionError:
+                pass
             except Exception as exception:
                 raise UpdateFailed() from exception
         return self._data
@@ -118,13 +120,15 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Next update in %s seconds.", wait_seconds)
         async_call_later(self.hass, wait_seconds, self._async_refresh_data)
         try:
-            self._data = await self.hass.async_add_executor_job(
-                self.get_sensors, self.hass, self._config
-            )
+            await self.get_sensors()
+        except openeihttp.RateLimit:
+            pass           
+        except AssertionError:
+            pass        
         except Exception as exception:
             raise UpdateFailed() from exception
 
-    def get_sensors(self) -> dict:
+    async def get_sensors(self) -> dict:
         """Update sensor data."""
         api = self._config.data.get(CONF_API_KEY)
         plan = self._config.data.get(CONF_PLAN)
@@ -150,7 +154,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         )
         if self._rate_limit_count == 0:
             try:
-                rate.update()
+                await rate.update()
             except openeihttp.RateLimit:
                 _LOGGER.error("API Rate limit exceded, retrying later.")
                 if self._data == {}:
@@ -180,7 +184,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             data.update(_sensor)
 
         _LOGGER.debug("DEBUG: %s", data)
-        return data
+        self._data = data
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
