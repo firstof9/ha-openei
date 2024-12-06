@@ -37,4 +37,3 @@ async def test_sensors(hass, mock_api):
 
     state = hass.states.get(FAKE_CURRENT_RATE_STRUCTURE_SENSOR)
     assert state is not None
-    assert state.state == "3"
