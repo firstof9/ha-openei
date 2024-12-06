@@ -184,7 +184,9 @@ async def test_reconfig_form(
         "custom_components.openei.config_flow._lookup_plans",
         return_value={
             "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}],
-            "New Fake Utility Co": [{"name": "Fake Plan Name", "label": "new_randomstring"}]
+            "New Fake Utility Co": [
+                {"name": "Fake Plan Name", "label": "new_randomstring"}
+            ],
         },
     ), patch(
         "custom_components.openei.config_flow._get_entities",

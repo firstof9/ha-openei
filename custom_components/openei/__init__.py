@@ -42,7 +42,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     if CONF_MANUAL_PLAN not in entry.data.keys() and CONF_PLAN not in entry.data.keys():
         _LOGGER.error("Plan configuration missing.")
-        raise ConfigEntryNotReady        
+        raise ConfigEntryNotReady
 
     entry.add_update_listener(update_listener)
 

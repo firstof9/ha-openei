@@ -35,6 +35,7 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._data = {}
         self._errors = {}
+        self._entry = {}
 
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
@@ -105,7 +106,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
         """Add reconfigure step to allow to reconfigure a config entry."""
         self._entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
@@ -117,7 +117,6 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self._data.update(user_input)
             return await self.async_step_reconfig_2()
         return await self._show_reconfig_form(user_input)
-
 
     async def _show_reconfig_form(self, user_input):
         """Show the configuration form to edit configuration data."""
@@ -134,10 +133,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             self._data.update(user_input)
             return await self.async_step_reconfig_3()
-        return await self._show_reconfig_2(user_input)
-    
+        return await self._show_reconfig_2()
 
-    async def _show_reconfig_2(self, user_input):
+    async def _show_reconfig_2(self):
         """Show the configuration form to edit configuration data."""
         defaults = {}
         utility_list = await _get_utility_list(self.hass, self._data)
@@ -147,33 +145,30 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=_get_schema_step_2(self._data, defaults, utility_list),
             errors=self._errors,
         )
-    
+
     async def async_step_reconfig_3(self, user_input: dict[str, Any] | None = None):
         """Add reconfigure step to allow to reconfigure a config entry."""
         self._errors = {}
 
         if user_input is not None:
             if user_input[CONF_SENSOR] == "(none)":
-                user_input.pop(CONF_SENSOR, None)            
+                user_input.pop(CONF_SENSOR, None)
             self._data.update(user_input)
-            self.hass.config_entries.async_update_entry(
-                self._entry, data=self._data
-            )
+            self.hass.config_entries.async_update_entry(self._entry, data=self._data)
             await self.hass.config_entries.async_reload(self._entry.entry_id)
             _LOGGER.debug("%s reconfigured.", DOMAIN)
             return self.async_abort(reason="reconfigure_successful")
-        return await self._show_reconfig_3(user_input)
-    
+        return await self._show_reconfig_3()
 
-    async def _show_reconfig_3(self, user_input):
+    async def _show_reconfig_3(self):
         """Show the configuration form to edit configuration data."""
         defaults = {}
-        plan_list = await _get_plan_list(self.hass, self._data)        
+        plan_list = await _get_plan_list(self.hass, self._data)
         return self.async_show_form(
             step_id="reconfig_3",
             data_schema=_get_schema_step_3(self.hass, self._data, defaults, plan_list),
             errors=self._errors,
-        )    
+        )
 
 
 def _get_schema_step_1(
