@@ -40,26 +40,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    updated_config = entry.data.copy()
-
-    _LOGGER.debug("config_entry: %s", updated_config)
-
-    if CONF_SENSOR in updated_config.keys() and updated_config[CONF_SENSOR] == "(none)":
-        updated_config.pop(CONF_SENSOR, None)
-
-    if CONF_MANUAL_PLAN not in updated_config.keys():
-        updated_config[CONF_MANUAL_PLAN] = ""
-
-    if CONF_PLAN not in updated_config.keys():
-        updated_config[CONF_PLAN] = ""
-
-    if not any([updated_config[CONF_MANUAL_PLAN], updated_config[CONF_PLAN]]):
+    if CONF_MANUAL_PLAN not in entry.data.keys() and CONF_PLAN not in entry.data.keys():
         _LOGGER.error("Plan configuration missing.")
-        raise ConfigEntryNotReady
-
-    _LOGGER.debug("updated_config: %s", updated_config)
-    if updated_config != entry.data:
-        hass.config_entries.async_update_entry(entry, data=updated_config)
+        raise ConfigEntryNotReady        
 
     entry.add_update_listener(update_listener)
 
