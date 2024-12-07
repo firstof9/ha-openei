@@ -11,3 +11,4 @@ pydocstyle
 isort
 pylint
 aioresponses
+aiofiles
