@@ -4,7 +4,6 @@ import logging
 from datetime import datetime, timedelta
 
 import openeihttp
-import os
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -119,7 +118,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         api = self._config.data.get(CONF_API_KEY)
         plan = self._config.data.get(CONF_PLAN)
         meter = self._config.data.get(CONF_SENSOR)
-        cache_file = f'.storage/openei_{self._config.entry_id}'
+        cache_file = f".storage/openei_{self._config.entry_id}"
         reading = None
 
         if self._config.data.get(CONF_MANUAL_PLAN):
