@@ -2,3 +2,4 @@ __pycache__
 pythonenv*
 .coverage
 coverage.xml
+.storage
