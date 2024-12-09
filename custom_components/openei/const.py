@@ -94,7 +94,7 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         name="Fixed Charge (first meter)",
         icon="mdi:cash-multiple",
         entity_category=EntityCategory.DIAGNOSTIC,
-    ),    
+    ),
 }
 
 BINARY_SENSORS: Final[dict[str, BinarySensorEntityDescription]] = {
