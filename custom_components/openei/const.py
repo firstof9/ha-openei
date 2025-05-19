@@ -73,6 +73,16 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         name="Current Energy Rate Structure",
         icon="mdi:tag",
     ),
+    "next_energy_rate_structure": SensorEntityDescription(
+        key="next_energy_rate_structure",
+        name="Next Energy Rate Structure",
+        icon="mdi:tag",
+    ),
+    "next_energy_rate_structure_time": SensorEntityDescription(
+        key="next_energy_rate_structure_time",
+        name="Next Energy Rate Structure Time",
+        icon="mdi:clock-outline",
+    ),
     "all_rates": SensorEntityDescription(
         key="all_rates",
         name="All Listed Rates",
