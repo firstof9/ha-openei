@@ -13,6 +13,8 @@ FAKE_CURRENT_RATE_SENSOR = "sensor.fake_utility_co_current_energy_rate"
 FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
     "sensor.fake_utility_co_current_energy_rate_structure"
 )
+FAKE_NEXT_RATE_SENSOR = "sensor.fake_utility_co_next_energy_rate_structure"
+FAKE_NEXT_RATE_TIME_SENSOR = "sensor.fake_utility_co_next_energy_rate_structure_time"
 
 pytestmark = pytest.mark.asyncio
 
@@ -38,6 +40,12 @@ async def test_sensors(hass, mock_api, caplog):
         assert state.attributes["all_rates"] == [0.24477, 0.06118, 0.19847, 0.06116]
 
         state = hass.states.get(FAKE_CURRENT_RATE_STRUCTURE_SENSOR)
+        assert state is not None
+
+        state = hass.states.get(FAKE_NEXT_RATE_SENSOR)
+        assert state is not None
+
+        state = hass.states.get(FAKE_NEXT_RATE_TIME_SENSOR)
         assert state is not None
 
         state = hass.states.get(FAKE_FIXEDCHARGE_SENSOR)
