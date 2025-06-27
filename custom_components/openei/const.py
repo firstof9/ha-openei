@@ -105,6 +105,11 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         icon="mdi:cash-multiple",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    "current_sell_rate": SensorEntityDescription(
+        key="current_sell_rate",
+        name="Current Energy Sell Rate",
+        icon="mdi:cash-multiple",
+    ),
 }
 
 BINARY_SENSORS: Final[dict[str, BinarySensorEntityDescription]] = {

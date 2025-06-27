@@ -1,1 +1,2 @@
 homeassistant
+python_openei==0.2.7

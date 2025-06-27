@@ -10,6 +10,7 @@ from tests.const import CONFIG_DATA
 FAKE_MINCHARGE_SENSOR = "sensor.fake_utility_co_minimum_charge"
 FAKE_FIXEDCHARGE_SENSOR = "sensor.fake_utility_co_fixed_charge_first_meter"
 FAKE_CURRENT_RATE_SENSOR = "sensor.fake_utility_co_current_energy_rate"
+FAKE_CURRENT_SELL_RATE_SENSOR = "sensor.fake_utility_co_current_energy_sell_rate"
 FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
     "sensor.fake_utility_co_current_energy_rate_structure"
 )
@@ -51,3 +52,6 @@ async def test_sensors(hass, mock_api, caplog):
         state = hass.states.get(FAKE_FIXEDCHARGE_SENSOR)
         assert state is not None
         assert state.state == "16.91"
+
+        state = hass.states.get(FAKE_CURRENT_SELL_RATE_SENSOR)
+        assert state.state == "unknown"
