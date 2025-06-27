@@ -113,7 +113,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug("Exception: %s", exception)
             raise UpdateFailed() from exception
 
-    async def get_sensors(self) -> dict:
+    async def get_sensors(self) -> None:
         """Update sensor data."""
         api = self._config.data.get(CONF_API_KEY)
         plan = self._config.data.get(CONF_PLAN)
