@@ -70,7 +70,13 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
 
         _LOGGER.debug("Data will be updated at the top of every hour.")
 
-        super().__init__(hass, _LOGGER, config_entry=config name=DOMAIN, update_interval=self.interval)
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=config,
+            name=DOMAIN,
+            update_interval=self.interval,
+        )
 
     async def _async_update_data(self) -> dict:
         """Update data via library."""
