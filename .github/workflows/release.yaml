@@ -25,7 +25,7 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           sed -i '/VERSION = /c\VERSION = "${{ env.VERSION }}"' ${{ github.workspace }}/custom_components/openei/const.py
-          sed -i '/version/c\  "version": "${{ env.VERSION }}"' ${{ github.workspace }}/custom_components/openei/manifest.json
+          sed -i '/version/c\  \"version\": \"${{ env.VERSION }}\"' ${{ github.workspace }}/custom_components/openei/manifest.json
 
       - name: "Set version numbmer"
         if: ${{ github.event_name == 'workflow_dispatch' }}
