@@ -124,7 +124,9 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         api = self._config.data.get(CONF_API_KEY)
         plan = self._config.data.get(CONF_PLAN)
         meter = self._config.data.get(CONF_SENSOR)
-        cache_file = f"{self.hass.config.config_dir}/.storage/openei_{self._config.entry_id}"
+        cache_file = (
+            f"{self.hass.config.config_dir}/.storage/openei_{self._config.entry_id}"
+        )
         reading = None
 
         if self._config.data.get(CONF_MANUAL_PLAN):
