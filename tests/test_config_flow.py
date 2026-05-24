@@ -262,6 +262,7 @@ async def test_get_entities_helper(hass):
 async def test_get_schema_step_1():
     """Test _get_schema_step_1."""
     from custom_components.openei.config_flow import _get_schema_step_1
+
     # user_input is None
     schema = _get_schema_step_1(None, {})
     assert schema is not None
@@ -278,6 +279,7 @@ async def test_get_schema_step_1():
 async def test_get_schema_step_2():
     """Test _get_schema_step_2."""
     from custom_components.openei.config_flow import _get_schema_step_2
+
     # user_input is None
     schema = _get_schema_step_2(None, {}, ["Utility 1"])
     assert schema is not None
@@ -286,6 +288,7 @@ async def test_get_schema_step_2():
 async def test_get_schema_step_3(hass):
     """Test _get_schema_step_3."""
     from custom_components.openei.config_flow import _get_schema_step_3
+
     # user_input is None
     schema = _get_schema_step_3(hass, None, {}, ["Plan 1"])
     assert schema is not None

@@ -203,7 +203,10 @@ async def test_setup_entry_sensor_unavailable(hass, mock_api, caplog):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    assert "Sensor: sensor.fakesensor state is unavailable, skipping reading." in caplog.text
+    assert (
+        "Sensor: sensor.fakesensor state is unavailable, skipping reading."
+        in caplog.text
+    )
 
 
 async def test_setup_entry_sensor_value_error(hass, mock_api, caplog):
@@ -219,7 +222,10 @@ async def test_setup_entry_sensor_value_error(hass, mock_api, caplog):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    assert "Sensor: sensor.fakesensor has non-numeric state 'non-numeric', skipping reading." in caplog.text
+    assert (
+        "Sensor: sensor.fakesensor has non-numeric state 'non-numeric', skipping reading."
+        in caplog.text
+    )
 
 
 async def test_setup_entry_no_all_rates(hass, mock_api, caplog):
@@ -233,7 +239,8 @@ async def test_setup_entry_no_all_rates(hass, mock_api, caplog):
     )
 
     entry.add_to_hass(hass)
-    with patch("openeihttp.Rates.all_rates", new_callable=PropertyMock, return_value=None):
+    with patch(
+        "openeihttp.Rates.all_rates", new_callable=PropertyMock, return_value=None
+    ):
         await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
-
