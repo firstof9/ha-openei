@@ -66,3 +66,18 @@ template: |
 
   ## Links
   - [Submit bugs/feature requests](https://github.com/firstof9/ha-openei/issues)
+
+version-resolver:
+  major:
+    labels:
+      - "breaking-change"
+  minor:
+    labels:
+      - "feature"
+  patch:
+    labels:
+      - "bugfix"
+      - "fix"
+      - "bug"
+      - "chore"
+  default: patch
