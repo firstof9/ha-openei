@@ -8,15 +8,15 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.openei.const import DOMAIN
 from tests.const import CONFIG_DATA
 
-FAKE_MINCHARGE_SENSOR = "sensor.fake_utility_co_minimum_charge"
-FAKE_FIXEDCHARGE_SENSOR = "sensor.fake_utility_co_fixed_charge_first_meter"
-FAKE_CURRENT_RATE_SENSOR = "sensor.fake_utility_co_current_energy_rate"
-FAKE_CURRENT_SELL_RATE_SENSOR = "sensor.fake_utility_co_current_energy_sell_rate"
+FAKE_MINCHARGE_SENSOR = "sensor.openei_fake_utility_co_minimum_charge"
+FAKE_FIXEDCHARGE_SENSOR = "sensor.openei_fake_utility_co_fixed_charge_first_meter"
+FAKE_CURRENT_RATE_SENSOR = "sensor.openei_fake_utility_co_current_energy_rate"
+FAKE_CURRENT_SELL_RATE_SENSOR = "sensor.openei_fake_utility_co_current_energy_sell_rate"
 FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
-    "sensor.fake_utility_co_current_energy_rate_structure"
+    "sensor.openei_fake_utility_co_current_energy_rate_structure"
 )
-FAKE_NEXT_RATE_SENSOR = "sensor.fake_utility_co_next_energy_rate_structure"
-FAKE_NEXT_RATE_TIME_SENSOR = "sensor.fake_utility_co_next_energy_rate_structure_time"
+FAKE_NEXT_RATE_SENSOR = "sensor.openei_fake_utility_co_next_energy_rate_structure"
+FAKE_NEXT_RATE_TIME_SENSOR = "sensor.openei_fake_utility_co_next_energy_rate_structure_time"
 
 pytestmark = pytest.mark.asyncio
 
