@@ -18,9 +18,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
     coordinator = entry.runtime_data
 
     binary_sensors = []
-    for binary_sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
+    for sensor_description in BINARY_SENSORS.values():
         binary_sensors.append(
-            OpenEIBinarySensor(BINARY_SENSORS[binary_sensor], entry, coordinator)
+            OpenEIBinarySensor(sensor_description, entry, coordinator)
         )
 
     async_add_devices(binary_sensors, False)

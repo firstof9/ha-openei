@@ -17,10 +17,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
     coordinator = entry.runtime_data
 
     sensors = []
-    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
-        if sensor == "all_rates":
+    for sensor_key, sensor_description in SENSOR_TYPES.items():
+        if sensor_key == "all_rates":
             continue
-        sensors.append(OpenEISensor(SENSOR_TYPES[sensor], entry, coordinator))
+        sensors.append(OpenEISensor(sensor_description, entry, coordinator))
 
     async_add_devices(sensors, False)
 

@@ -92,7 +92,7 @@ def mock_get_sensors():
             "all_rates": [0.24477, 0.007],
             "all_adjustments": [0.02824917, 0.0],
         }
-    yield mock_sensors
+        yield mock_sensors
 
 
 @pytest.fixture(name="mock_sensors_err")

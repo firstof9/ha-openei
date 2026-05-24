@@ -85,7 +85,7 @@ async def test_setup_api_error(hass):
         await hass.async_block_till_done()
 
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
-    assert not hass.data.get(DOMAIN)
+    assert getattr(entry, "runtime_data", None) is None
 
 
 async def test_setup_not_authorized(hass, caplog):
@@ -105,7 +105,7 @@ async def test_setup_not_authorized(hass, caplog):
         await hass.async_block_till_done()
 
     assert "Invalid OpenEI API key." in caplog.text
-    assert not hass.data.get(DOMAIN)
+    assert getattr(entry, "runtime_data", None) is None
 
 
 async def test_setup_entry_sensor_error(hass, mock_api, caplog):
