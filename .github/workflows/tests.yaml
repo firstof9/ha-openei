@@ -84,7 +84,7 @@ jobs:
 
       - name: 📦 Install requirements
         run: |
-          uv pip install tox tox-gh-actions tox-uv
+          uv pip install --system tox tox-gh-actions tox-uv
 
       - name: 🏃 Test with tox
         run: tox
