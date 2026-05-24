@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 2c9f875913ee60ca25ce70243dc24d5b6415598c # v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+
+  - repo: https://github.com/psf/black
+    rev: 3702ba224ecffbcec30af640c149f231d90aebdb # 24.4.2
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/isort
+    rev: c235f5e450b4b84e58d114ed4c589cbf454175a3 # 5.13.2
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7d37d9032d0d161634be4554273c30efd4dea0b3 # 7.0.0
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - pycodestyle>=2.11.0
+          - pyflakes>=3.2.0
+          - flake8-docstrings>=1.7.0
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: e5ea6670624c24f8321f6328ef3176dbba76db46 # v1.10.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pytest
+          - homeassistant
+          - types-aiofiles

@@ -12,3 +12,4 @@ isort
 pylint
 aioresponses
 aiofiles
+prek
