@@ -3,3 +3,10 @@ pythonenv*
 .coverage
 coverage.xml
 .storage
+.tox
+.mypy_cache
+.pytest_cache
+.vscode
+.venv
+venv
+*.pyc

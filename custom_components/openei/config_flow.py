@@ -84,6 +84,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=_get_schema_step_1(user_input, defaults),
             errors=self._errors,
+            description_placeholders={
+                "signup_url": "https://openei.org/services/api/signup/"
+            },
         )
 
     async def _show_config_form_2(self, user_input):  # pylint: disable=unused-argument
@@ -124,6 +127,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="reconfigure",
             data_schema=_get_schema_step_1(user_input, self._data),
             errors=self._errors,
+            description_placeholders={
+                "signup_url": "https://openei.org/services/api/signup/"
+            },
         )
 
     async def async_step_reconfig_2(self, user_input: dict[str, Any] | None = None):
