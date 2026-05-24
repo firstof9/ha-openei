@@ -6,31 +6,44 @@ on:
     branches:
       - master    
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: "ubuntu-latest"
     name: Validate
     steps:
+        - name: Harden Runner
+          uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+          with:
+            egress-policy: audit
+
         - name: 📥 Checkout the repository
-          uses: actions/checkout@v4
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
         - name: HACS validation
-          uses: "hacs/action@main"
+          uses: hacs/action@dcb30e72781db3f207d5236b861172774ab0b485 # main
           with:
             category: "integration"
             ignore: brands
 
         - name: Hassfest validation
-          uses: "home-assistant/actions/hassfest@master"
+          uses: home-assistant/actions/hassfest@f6f29a7ee3fa0eccadf3620a7b9ee00ab54ec03b # master
 
   style:
     runs-on: "ubuntu-latest"
     name: Check style formatting
     steps:
+        - name: Harden Runner
+          uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+          with:
+            egress-policy: audit
+
         - name: 📥 Checkout the repository
-          uses: actions/checkout@v4
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         - name: 🛠️ Set up Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
           with:
             python-version: "3.x"
         - run: python3 -m pip install black
@@ -47,14 +60,19 @@ jobs:
           - "3.13"
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: 📥 Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: 🛠️ Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           fetch-depth: 2      
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: 📦 Install requirements
@@ -63,7 +81,7 @@ jobs:
       - name: 🏃 Test with tox
         run: tox
       - name: 📤 Upload coverage to Codecov
-        uses: "actions/upload-artifact@v4"
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-data
           path: "coverage.xml"
@@ -72,15 +90,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: 📥 Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 2
       - name: 📥 Download coverage data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: coverage-data
       - name: 📤 Upload coverage report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # required
