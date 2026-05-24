@@ -150,3 +150,90 @@ async def test_rate_limit_error(hass, mock_api_err, caplog):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert "API Rate limit exceeded, retrying later." in caplog.text
+
+
+async def test_setup_assertion_error(hass, caplog):
+    """Test setting up entities with an AssertionError."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    with (
+        caplog.at_level(logging.DEBUG),
+        patch("openeihttp.Rates.update", side_effect=AssertionError("Mock error")),
+    ):
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    assert "Data not yet available: Mock error" in caplog.text
+
+
+async def test_setup_exception_error(hass, caplog):
+    """Test setting up entities with an Exception."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    with (
+        caplog.at_level(logging.DEBUG),
+        patch("openeihttp.Rates.update", side_effect=Exception("Mock exception")),
+    ):
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    assert "Unexpected exception: Mock exception" in caplog.text
+
+
+async def test_setup_entry_sensor_unavailable(hass, mock_api, caplog):
+    """Test setting up entities with sensor unavailable."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA_WITH_SENSOR,
+    )
+
+    hass.states.async_set("sensor.fakesensor", "unavailable")
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert "Sensor: sensor.fakesensor state is unavailable, skipping reading." in caplog.text
+
+
+async def test_setup_entry_sensor_value_error(hass, mock_api, caplog):
+    """Test setting up entities with sensor non-numeric state."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA_WITH_SENSOR,
+    )
+
+    hass.states.async_set("sensor.fakesensor", "non-numeric")
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert "Sensor: sensor.fakesensor has non-numeric state 'non-numeric', skipping reading." in caplog.text
+
+
+async def test_setup_entry_no_all_rates(hass, mock_api, caplog):
+    """Test setting up entities with no all_rates."""
+    from unittest.mock import PropertyMock
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    with patch("openeihttp.Rates.all_rates", new_callable=PropertyMock, return_value=None):
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+

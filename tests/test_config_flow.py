@@ -257,3 +257,52 @@ async def test_get_entities_helper(hass):
     result = _get_entities(hass, "sensor", search="energy", extra_entities="(none)")
     assert result[0] == "(none)"
     assert len(result) == 2
+
+
+async def test_get_schema_step_1():
+    """Test _get_schema_step_1."""
+    from custom_components.openei.config_flow import _get_schema_step_1
+    # user_input is None
+    schema = _get_schema_step_1(None, {})
+    assert schema is not None
+
+    # CONF_LOCATION is '""' in user_input
+    schema = _get_schema_step_1({"location": '""', "api_key": "test"}, {})
+    assert schema is not None
+
+    # CONF_LOCATION is '""' in default_dict
+    schema = _get_schema_step_1({}, {"location": '""'})
+    assert schema is not None
+
+
+async def test_get_schema_step_2():
+    """Test _get_schema_step_2."""
+    from custom_components.openei.config_flow import _get_schema_step_2
+    # user_input is None
+    schema = _get_schema_step_2(None, {}, ["Utility 1"])
+    assert schema is not None
+
+
+async def test_get_schema_step_3(hass):
+    """Test _get_schema_step_3."""
+    from custom_components.openei.config_flow import _get_schema_step_3
+    # user_input is None
+    schema = _get_schema_step_3(hass, None, {}, ["Plan 1"])
+    assert schema is not None
+
+    # CONF_SENSOR is '(none)' in default_dict
+    schema = _get_schema_step_3(hass, {}, {"sensor": "(none)"}, ["Plan 1"])
+    assert schema is not None
+
+
+async def test_lookup_plans():
+    """Test _lookup_plans."""
+    from custom_components.openei.config_flow import _lookup_plans
+
+    class MockHandler:
+        async def lookup_plans(self):
+            return {"Utility": [{"name": "Plan", "label": "label"}]}
+
+    handler = MockHandler()
+    result = await _lookup_plans(handler)
+    assert result == {"Utility": [{"name": "Plan", "label": "label"}]}
