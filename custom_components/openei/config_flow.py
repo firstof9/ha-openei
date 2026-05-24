@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import openeihttp
 import voluptuous as vol
@@ -84,6 +84,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=_get_schema_step_1(user_input, defaults),
             errors=self._errors,
+            description_placeholders={
+                "signup_url": "https://openei.org/services/api/signup/"
+            },
         )
 
     async def _show_config_form_2(self, user_input):  # pylint: disable=unused-argument
@@ -124,6 +127,9 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="reconfigure",
             data_schema=_get_schema_step_1(user_input, self._data),
             errors=self._errors,
+            description_placeholders={
+                "signup_url": "https://openei.org/services/api/signup/"
+            },
         )
 
     async def async_step_reconfig_2(self, user_input: dict[str, Any] | None = None):
@@ -172,8 +178,8 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 def _get_schema_step_1(
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
     if user_input is None:
@@ -201,8 +207,8 @@ def _get_schema_step_1(
 
 
 def _get_schema_step_2(
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
     utility_list: list,
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
@@ -224,8 +230,8 @@ def _get_schema_step_2(
 
 def _get_schema_step_3(
     hass: HomeAssistant,
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
     plan_list: list,
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
@@ -311,9 +317,9 @@ async def _lookup_plans(handler) -> list:
 def _get_entities(
     hass: HomeAssistant,
     domain: str,
-    search: List[str] = None,
-    extra_entities: List[str] = None,
-) -> List[str]:
+    search: str | None = None,
+    extra_entities: str | None = None,
+) -> list[str]:
     data = []
     if domain not in hass.data:
         return data
@@ -327,5 +333,5 @@ def _get_entities(
 
     if extra_entities:
         data.insert(0, extra_entities)
-    data.sort  # pylint: disable=pointless-statement
+    data.sort()
     return data

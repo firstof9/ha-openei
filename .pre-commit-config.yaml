@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 2c9f875913ee60ca25ce70243dc24d5b6415598c # v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+        exclude: \.devcontainer/
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 0c7b6c989466a93942def1f84baf36ddfcd60c83 # v0.15.14
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: e5ea6670624c24f8321f6328ef3176dbba76db46 # v1.10.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pytest
+          - homeassistant
+          - types-aiofiles

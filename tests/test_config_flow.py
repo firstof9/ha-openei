@@ -1,6 +1,5 @@
 """Test OpenEI config flow."""
 
-import logging
 import re
 from unittest.mock import patch
 
@@ -68,21 +67,23 @@ async def test_form(
     assert result["errors"] == {}
     # assert result['title'] == title_1
 
-    with patch(
-        "custom_components.openei.async_setup", return_value=True
-    ) as mock_setup, patch(
-        "custom_components.openei.async_setup_entry",
-        return_value=True,
-    ) as mock_setup_entry, patch(
-        "custom_components.openei.config_flow._lookup_plans",
-        return_value={
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
-        },
-    ), patch(
-        "custom_components.openei.config_flow._get_entities",
-        return_value=["(none)"],
+    with (
+        patch("custom_components.openei.async_setup", return_value=True) as mock_setup,
+        patch(
+            "custom_components.openei.async_setup_entry",
+            return_value=True,
+        ) as mock_setup_entry,
+        patch(
+            "custom_components.openei.config_flow._lookup_plans",
+            return_value={
+                "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
+            },
+        ),
+        patch(
+            "custom_components.openei.config_flow._get_entities",
+            return_value=["(none)"],
+        ),
     ):
-
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"], input_1
         )
@@ -180,17 +181,22 @@ async def test_reconfig_form(
     assert reconfigure_result["type"] is FlowResultType.FORM
     assert reconfigure_result["step_id"] == step_id
 
-    with patch(
-        "custom_components.openei.config_flow._lookup_plans",
-        return_value={
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}],
-            "New Fake Utility Co": [
-                {"name": "Fake Plan Name", "label": "new_randomstring"}
-            ],
-        },
-    ), patch(
-        "custom_components.openei.config_flow._get_entities",
-        return_value=["(none)"],
+    with (
+        patch(
+            "custom_components.openei.config_flow._lookup_plans",
+            return_value={
+                "Fake Utility Co": [
+                    {"name": "Fake Plan Name", "label": "randomstring"}
+                ],
+                "New Fake Utility Co": [
+                    {"name": "Fake Plan Name", "label": "new_randomstring"}
+                ],
+            },
+        ),
+        patch(
+            "custom_components.openei.config_flow._get_entities",
+            return_value=["(none)"],
+        ),
     ):
         result = await hass.config_entries.flow.async_configure(
             reconfigure_result["flow_id"], input_1
@@ -214,3 +220,40 @@ async def test_reconfig_form(
 
         entry = hass.config_entries.async_entries(DOMAIN)[0]
         assert entry.data.copy() == data
+
+
+async def test_get_entities_helper(hass):
+    """Test the _get_entities helper function."""
+    from custom_components.openei.config_flow import _get_entities
+
+    class MockEntity:
+        def __init__(self, entity_id, device_class="energy"):
+            self.entity_id = entity_id
+            self.device_class = device_class
+
+    domain = "sensor"
+    # Test case 1: domain not in hass.data
+    assert _get_entities(hass, domain) == []
+
+    class MockDomainData:
+        def __init__(self, entities):
+            self.entities = entities
+
+    # Test case 2: entities list empty
+    hass.data[domain] = MockDomainData([])
+    assert _get_entities(hass, domain) == []
+
+    # Test case 3: retrieve all entities with device_class (no search filter)
+    entity_1 = MockEntity("sensor.energy_usage", "energy")
+    entity_2 = MockEntity("sensor.water_usage", "water")
+    hass.data[domain] = MockDomainData([entity_1, entity_2])
+    assert _get_entities(hass, domain) == ["sensor.energy_usage", "sensor.water_usage"]
+
+    # Test case 4: search filter matching
+    assert _get_entities(hass, domain, search="energy") == ["sensor.energy_usage"]
+
+    # Test case 5: extra entities inserted and sorted
+    assert _get_entities(hass, domain, search="energy", extra_entities="(none)") == [
+        "(none)",
+        "sensor.energy_usage",
+    ]

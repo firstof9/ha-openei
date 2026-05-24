@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nOmit address to use latitude and longitude from Home Assistant.",
+                "description": "If you do not have an API Key yet you can get one here: {signup_url}\n\nOmit address to use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)",
@@ -28,7 +28,7 @@
             },
             "reconfigure": {
                 "title": "OpenEI (Step 1)",
-                "description": "If you do not have an API Key yet you can get one here: https://openei.org/services/api/signup/\n\nOmit address to use latitude and longitude from Home Assistant.",
+                "description": "If you do not have an API Key yet you can get one here: {signup_url}\n\nOmit address to use latitude and longitude from Home Assistant.",
                 "data": {
                     "api_key": "API Key",
                     "radius": "Radius in miles (optional)",
@@ -50,7 +50,7 @@
                     "sensor": "Energy sensor for Tier plans (optional)",
                     "manual_plan": "Manually enter plan from OpenEI website (optional)"
                 }
-            }                
+            }
         },
         "error": {
             "auth": "Username/Password is wrong."

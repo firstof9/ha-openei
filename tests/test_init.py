@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
-from openeihttp import APIError, RateLimit
+from openeihttp import APIError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
@@ -33,7 +33,6 @@ async def test_setup_entry(hass, mock_aioclient, caplog):
     )
 
     with caplog.at_level(logging.DEBUG):
-
         entry.add_to_hass(hass)
         await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
