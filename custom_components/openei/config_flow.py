@@ -317,8 +317,8 @@ async def _lookup_plans(handler) -> list:
 def _get_entities(
     hass: HomeAssistant,
     domain: str,
-    search: list[str] = None,
-    extra_entities: list[str] = None,
+    search: str | None = None,
+    extra_entities: str | None = None,
 ) -> list[str]:
     data = []
     if domain not in hass.data:

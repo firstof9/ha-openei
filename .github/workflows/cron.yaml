@@ -18,12 +18,14 @@ jobs:
             egress-policy: audit
 
         - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          with:
+            persist-credentials: false
 
         - name: HACS validation
-          uses: hacs/action@dcb30e72781db3f207d5236b861172774ab0b485 # main
+          uses: hacs/action@dcb30e72781db3f207d5236b861172774ab0b485 # v22.5.0
           with:
             category: "integration"
             ignore: brands
 
         - name: Hassfest validation
-          uses: home-assistant/actions/hassfest@f6f29a7ee3fa0eccadf3620a7b9ee00ab54ec03b # master
+          uses: home-assistant/actions/hassfest@f6f29a7ee3fa0eccadf3620a7b9ee00ab54ec03b # v1.0.0
