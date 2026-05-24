@@ -56,7 +56,8 @@
             "auth": "Username/Password is wrong."
         },
         "abort": {
-            "single_instance_allowed": "Only a single configuration of Blueprint is allowed."
+            "single_instance_allowed": "Only a single configuration of OpenEI is allowed.",
+            "reconfigure_successful": "Re-configuration was successful."
         }
     }
 }

@@ -1,28 +1,26 @@
-"""Sensor platform for integration_blueprint."""
+"""Sensor platform for OpenEI."""
 
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
 from .const import ATTRIBUTION, DOMAIN, SENSOR_TYPES
 
 
-async def async_setup_entry(hass, entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_devices):
     """Set up sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
 
     sensors = []
-    for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
-        if sensor == "all_rates":
+    for sensor_key, sensor_description in SENSOR_TYPES.items():
+        if sensor_key == "all_rates":
             continue
-        sensors.append(OpenEISensor(hass, SENSOR_TYPES[sensor], entry, coordinator))
+        sensors.append(OpenEISensor(sensor_description, entry, coordinator))
 
     async_add_devices(sensors, False)
 
@@ -30,16 +28,16 @@ async def async_setup_entry(hass, entry, async_add_devices):
 class OpenEISensor(CoordinatorEntity, SensorEntity):
     """OpenEI Sensor class."""
 
+    _attr_attribution = ATTRIBUTION
+
     def __init__(
         self,
-        hass: HomeAssistant,
         sensor_description: SensorEntityDescription,
         entry: ConfigEntry,
-        coordinator: str,
+        coordinator,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self.hass = hass
         self._name = sensor_description.name
         self._key = sensor_description.key
         self._unique_id = entry.entry_id
@@ -76,11 +74,11 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict | None:
-        """Return sesnsor attributes."""
+        """Return sensor attributes."""
         attrs = {}
-        attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
         if self._key == "current_rate":
             attrs["all_rates"] = self.coordinator.data.get("all_rates")
+            attrs["all_adjustments"] = self.coordinator.data.get("all_adjustments")
         return attrs
 
     @property

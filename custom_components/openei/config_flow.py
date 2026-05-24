@@ -1,4 +1,4 @@
-"""Adds config flow for Blueprint."""
+"""Config flow for OpenEI."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 
 from .const import (
     CONF_API_KEY,
@@ -26,10 +27,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+    """Config flow for OpenEI."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     def __init__(self):
         """Initialize."""
@@ -273,10 +273,7 @@ async def _get_utility_list(hass, user_input) -> list | None:
 
     plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
     plans = await _lookup_plans(plans)
-    utilities = []
-
-    for utility in plans:
-        utilities.append(utility)
+    utilities = list(plans.keys())
 
     _LOGGER.debug("get_utility_list: %s", utilities)
     return utilities
@@ -320,16 +317,18 @@ def _get_entities(
     search: str | None = None,
     extra_entities: str | None = None,
 ) -> list[str]:
-    data = []
-    if domain not in hass.data:
-        return data
-
-    for entity in hass.data[domain].entities:
-        if not hasattr(entity, "device_class"):
-            continue
-        if search is not None and not entity.device_class == search:
-            continue
-        data.append(entity.entity_id)
+    """Return entity IDs for the given domain, optionally filtered by device class."""
+    registry = er.async_get(hass)
+    data = [
+        entry.entity_id
+        for entry in registry.entities.values()
+        if entry.domain == domain
+        and (
+            search is None
+            or entry.device_class == search
+            or entry.original_device_class == search
+        )
+    ]
 
     if extra_entities:
         data.insert(0, extra_entities)

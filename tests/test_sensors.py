@@ -41,7 +41,15 @@ async def test_sensors(hass, mock_api, caplog):
 
         state = hass.states.get(FAKE_CURRENT_RATE_SENSOR)
         assert state is not None
+        # all_rates is now the first element of the tuple returned by the library
         assert state.attributes["all_rates"] == [0.24477, 0.06118, 0.19847, 0.06116]
+        # all_adjustments is the second element of the tuple
+        assert state.attributes["all_adjustments"] == [
+            0.02824917,
+            0.02138383,
+            0.02651779,
+            0.02138308,
+        ]
 
         state = hass.states.get(FAKE_CURRENT_RATE_STRUCTURE_SENSOR)
         assert state is not None

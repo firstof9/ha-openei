@@ -68,7 +68,6 @@ async def test_form(
     # assert result['title'] == title_1
 
     with (
-        patch("custom_components.openei.async_setup", return_value=True) as mock_setup,
         patch(
             "custom_components.openei.async_setup_entry",
             return_value=True,
@@ -105,7 +104,6 @@ async def test_form(
     assert result4["data"] == data
 
     await hass.async_block_till_done()
-    assert len(mock_setup.mock_calls) == 1
     assert len(mock_setup_entry.mock_calls) == 1
 
 
@@ -224,36 +222,90 @@ async def test_reconfig_form(
 
 async def test_get_entities_helper(hass):
     """Test the _get_entities helper function."""
+    from homeassistant.helpers import entity_registry as er
+
     from custom_components.openei.config_flow import _get_entities
 
-    class MockEntity:
-        def __init__(self, entity_id, device_class="energy"):
-            self.entity_id = entity_id
-            self.device_class = device_class
+    registry = er.async_get(hass)
 
-    domain = "sensor"
-    # Test case 1: domain not in hass.data
-    assert _get_entities(hass, domain) == []
+    # Test case 1: no entities registered — should return empty list
+    assert _get_entities(hass, "sensor") == []
 
-    class MockDomainData:
-        def __init__(self, entities):
-            self.entities = entities
+    # Test case 2: register entities and retrieve all
+    registry.async_get_or_create(
+        "sensor",
+        "test",
+        "energy_usage",
+        original_device_class="energy",
+    )
+    registry.async_get_or_create(
+        "sensor",
+        "test",
+        "water_usage",
+        original_device_class="water",
+    )
 
-    # Test case 2: entities list empty
-    hass.data[domain] = MockDomainData([])
-    assert _get_entities(hass, domain) == []
+    all_entities = _get_entities(hass, "sensor")
+    assert len(all_entities) == 2
 
-    # Test case 3: retrieve all entities with device_class (no search filter)
-    entity_1 = MockEntity("sensor.energy_usage", "energy")
-    entity_2 = MockEntity("sensor.water_usage", "water")
-    hass.data[domain] = MockDomainData([entity_1, entity_2])
-    assert _get_entities(hass, domain) == ["sensor.energy_usage", "sensor.water_usage"]
+    # Test case 3: search filter matching device class
+    energy_entities = _get_entities(hass, "sensor", search="energy")
+    assert len(energy_entities) == 1
+    assert energy_entities[0].startswith("sensor.")
 
-    # Test case 4: search filter matching
-    assert _get_entities(hass, domain, search="energy") == ["sensor.energy_usage"]
+    # Test case 4: extra entities inserted at front, list is sorted
+    result = _get_entities(hass, "sensor", search="energy", extra_entities="(none)")
+    assert result[0] == "(none)"
+    assert len(result) == 2
 
-    # Test case 5: extra entities inserted and sorted
-    assert _get_entities(hass, domain, search="energy", extra_entities="(none)") == [
-        "(none)",
-        "sensor.energy_usage",
-    ]
+
+async def test_get_schema_step_1():
+    """Test _get_schema_step_1."""
+    from custom_components.openei.config_flow import _get_schema_step_1
+
+    # user_input is None
+    schema = _get_schema_step_1(None, {})
+    assert schema is not None
+
+    # CONF_LOCATION is '""' in user_input
+    schema = _get_schema_step_1({"location": '""', "api_key": "test"}, {})
+    assert schema is not None
+
+    # CONF_LOCATION is '""' in default_dict
+    schema = _get_schema_step_1({}, {"location": '""'})
+    assert schema is not None
+
+
+async def test_get_schema_step_2():
+    """Test _get_schema_step_2."""
+    from custom_components.openei.config_flow import _get_schema_step_2
+
+    # user_input is None
+    schema = _get_schema_step_2(None, {}, ["Utility 1"])
+    assert schema is not None
+
+
+async def test_get_schema_step_3(hass):
+    """Test _get_schema_step_3."""
+    from custom_components.openei.config_flow import _get_schema_step_3
+
+    # user_input is None
+    schema = _get_schema_step_3(hass, None, {}, ["Plan 1"])
+    assert schema is not None
+
+    # CONF_SENSOR is '(none)' in default_dict
+    schema = _get_schema_step_3(hass, {}, {"sensor": "(none)"}, ["Plan 1"])
+    assert schema is not None
+
+
+async def test_lookup_plans():
+    """Test _lookup_plans."""
+    from custom_components.openei.config_flow import _lookup_plans
+
+    class MockHandler:
+        async def lookup_plans(self):
+            return {"Utility": [{"name": "Plan", "label": "label"}]}
+
+    handler = MockHandler()
+    result = await _lookup_plans(handler)
+    assert result == {"Utility": [{"name": "Plan", "label": "label"}]}

@@ -42,13 +42,6 @@ def mock_aioclient():
         yield m
 
 
-@pytest.fixture(name="mock_call_later", autouse=True)
-def mock_call_later_fixture():
-    """Mock async_call_later."""
-    with patch("custom_components.openei.async_call_later"):
-        yield
-
-
 @pytest.fixture(name="mock_api")
 def mock_plandata(mock_aioclient):
     """Mock the status reply."""
@@ -82,50 +75,13 @@ def mock_lookup(mock_aioclient):
     )
 
 
-# @pytest.fixture(name="mock_api")
-# def mock_api():
-#     """Mock the library calls."""
-#     with patch("openeihttp.Rates") as mock_api:
-#         # mock_api = mock.Mock(spec=openeihttp.Rates)
-#         mock_api.return_value.current_rate = 0.24477
-#         mock_api.return_value.distributed_generation = "Net Metering"
-#         mock_api.return_value.approval = True
-#         mock_api.return_value.rate_name = 0.24477
-#         mock_api.return_value.mincharge = (10, "$/month")
-#         mock_api.return_value.lookup_plans = (
-#             '"Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]'
-#         )
-#         mock_api.return_value.all_rates = [0.24477, 0.007]
-#         mock_api.return_value.current_energy_rate_structure = 4
-
-#         yield mock_api
-
-
-# @pytest.fixture(name="mock_api_err")
-# def mock_api_err():
-#     """Mock the library calls."""
-#     with patch("openeihttp.Rates") as mock_api:
-#         mock_api.side_effect = openeihttp.RateLimit("Error")
-
-#         yield mock_api
-
-
-# @pytest.fixture(name="mock_api_config")
-# def mock_api_config():
-#     """Mock the library calls."""
-#     with patch("custom_components.openei.config_flow.openeihttp.Rates") as mock_api:
-#         mock_return = mock_api.return_value
-#         mock_return.lookup_plans.return_value = {
-#             "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
-#         }
-
-#         yield mock_return
-
-
 @pytest.fixture(name="mock_sensors")
 def mock_get_sensors():
     """Mock of get sensors function."""
-    with patch("custom_components.openei.get_sensors", autospec=True) as mock_sensors:
+    with patch(
+        "custom_components.openei.OpenEIDataUpdateCoordinator._get_sensors",
+        autospec=True,
+    ) as mock_sensors:
         mock_sensors.return_value = {
             "current_rate": 0.24477,
             "distributed_generation": "Net Metering",
@@ -134,13 +90,16 @@ def mock_get_sensors():
             "mincharge": 10,
             "mincharge_uom": "$/month",
             "all_rates": [0.24477, 0.007],
+            "all_adjustments": [0.02824917, 0.0],
         }
-    yield mock_sensors
+        yield mock_sensors
 
 
 @pytest.fixture(name="mock_sensors_err")
 def mock_sensors_api_error():
     """Mock of get sensors function."""
-    with patch("custom_components.openei.get_sensors") as mock_sensors:
+    with patch(
+        "custom_components.openei.OpenEIDataUpdateCoordinator._get_sensors"
+    ) as mock_sensors:
         mock_sensors.side_effect = openeihttp.RateLimit("Error")
         yield mock_sensors

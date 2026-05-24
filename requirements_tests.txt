@@ -1,5 +1,4 @@
 -r requirements_dev.txt
-python_openei
 pytest
 pytest-cov
 pytest-homeassistant-custom-component
