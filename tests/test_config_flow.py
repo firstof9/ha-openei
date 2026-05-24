@@ -220,3 +220,40 @@ async def test_reconfig_form(
 
         entry = hass.config_entries.async_entries(DOMAIN)[0]
         assert entry.data.copy() == data
+
+
+async def test_get_entities_helper(hass):
+    """Test the _get_entities helper function."""
+    from custom_components.openei.config_flow import _get_entities
+
+    class MockEntity:
+        def __init__(self, entity_id, device_class="energy"):
+            self.entity_id = entity_id
+            self.device_class = device_class
+
+    domain = "sensor"
+    # Test case 1: domain not in hass.data
+    assert _get_entities(hass, domain) == []
+
+    class MockDomainData:
+        def __init__(self, entities):
+            self.entities = entities
+
+    # Test case 2: entities list empty
+    hass.data[domain] = MockDomainData([])
+    assert _get_entities(hass, domain) == []
+
+    # Test case 3: retrieve all entities with device_class (no search filter)
+    entity_1 = MockEntity("sensor.energy_usage", "energy")
+    entity_2 = MockEntity("sensor.water_usage", "water")
+    hass.data[domain] = MockDomainData([entity_1, entity_2])
+    assert _get_entities(hass, domain) == ["sensor.energy_usage", "sensor.water_usage"]
+
+    # Test case 4: search filter matching
+    assert _get_entities(hass, domain, search="energy") == ["sensor.energy_usage"]
+
+    # Test case 5: extra entities inserted and sorted
+    assert _get_entities(hass, domain, search="energy", extra_entities="(none)") == [
+        "(none)",
+        "sensor.energy_usage",
+    ]
