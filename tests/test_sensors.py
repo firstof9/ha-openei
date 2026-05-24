@@ -16,7 +16,9 @@ FAKE_CURRENT_RATE_STRUCTURE_SENSOR = (
     "sensor.openei_fake_utility_co_current_energy_rate_structure"
 )
 FAKE_NEXT_RATE_SENSOR = "sensor.openei_fake_utility_co_next_energy_rate_structure"
-FAKE_NEXT_RATE_TIME_SENSOR = "sensor.openei_fake_utility_co_next_energy_rate_structure_time"
+FAKE_NEXT_RATE_TIME_SENSOR = (
+    "sensor.openei_fake_utility_co_next_energy_rate_structure_time"
+)
 
 pytestmark = pytest.mark.asyncio
 
