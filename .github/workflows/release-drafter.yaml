@@ -5,13 +5,14 @@ on:
     branches:
       - master
       - dev
-  pull_request:
+  pull_request_target:
     # Only following types are handled by the action, but one can default to all as well
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, synchronize, edited]
 
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   update_release_draft:
