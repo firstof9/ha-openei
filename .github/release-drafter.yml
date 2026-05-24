@@ -18,6 +18,23 @@ autolabeler:
   - label: "code-quality"
     title:
       - "/tests:/i"
+  - label: "integration"
+    files:
+      - "custom_components/**/*"
+  - label: "tests"
+    files:
+      - "tests/**/*"
+  - label: "ci"
+    files:
+      - ".github/workflows/**/*"
+      - ".github/release-drafter.yml"
+      - ".pre-commit-config.yaml"
+      - "pyproject.toml"
+  - label: "documentation"
+    files:
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "info.md"
 categories:
   - title: "💥 Breaking Change 💥"
     labels:
