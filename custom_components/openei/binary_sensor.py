@@ -5,17 +5,17 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
 from .const import BINARY_SENSORS, DOMAIN
 
 
-async def async_setup_entry(hass, entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_devices):
     """Set up binary_sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
 
     binary_sensors = []
     for binary_sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
@@ -27,13 +27,13 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
 
 class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
-    """integration_blueprint binary_sensor class."""
+    """OpenEI binary sensor class."""
 
     def __init__(
         self,
         sensor_description: BinarySensorEntityDescription,
         entry: ConfigEntry,
-        coordinator: str,
+        coordinator,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
@@ -43,10 +43,14 @@ class OpenEIBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._icon = sensor_description.icon
         self._config = entry
         self.coordinator = coordinator
-        self._attr_is_on = coordinator.data.get(self._key)
 
         self._attr_name = f"{slugify(self._config.title)}_{self._name}"
         self._attr_unique_id = f"{self._key}_{self._unique_id}"
+
+    @property
+    def is_on(self) -> bool | None:
+        """Return true if the binary sensor is on."""
+        return self.coordinator.data.get(self._key)
 
     @property
     def available(self) -> bool:

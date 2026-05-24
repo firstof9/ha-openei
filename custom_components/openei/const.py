@@ -6,22 +6,15 @@ from typing import Final
 
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.const import Platform
 from homeassistant.helpers.entity import EntityCategory
 
 # Base component constants
 NAME = "OpenEI"
 DOMAIN = "openei"
-DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.0-dev"
 ATTRIBUTION = "Data provided by OpenEI.org"
 ISSUE_URL = "https://github.com/firstof9/ha-openei/issues"
-PLATFORMS = ["binary_sensor", "sensor"]
-
-# Icons
-ICON = "mdi:format-quote-close"
-
-# Device classes
-BINARY_SENSOR_DEVICE_CLASS = "connectivity"
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
 # Configuration and options
 CONF_API_KEY = "api_key"
@@ -32,19 +25,6 @@ CONF_RADIUS = "radius"
 CONF_SENSOR = "sensor"
 CONF_UTILITY = "utility"
 
-# Defaults
-DEFAULT_NAME = DOMAIN
-
-
-STARTUP_MESSAGE = f"""
--------------------------------------------------------------------
-{NAME}
-Version: {VERSION}
-This is a custom integration!
-If you have any issues with this you need to open an issue here:
-{ISSUE_URL}
--------------------------------------------------------------------
-"""
 # property: name, icon, unit_of_measurement, device_class
 SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
     "current_rate": SensorEntityDescription(

@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
-from openeihttp import APIError
+from openeihttp import APIError, NotAuthorized
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
@@ -72,7 +72,7 @@ async def test_unload_entry(hass, mock_api):
 
 
 async def test_setup_api_error(hass):
-    """Test settting up entities."""
+    """Test setting up entities with an API error."""
     entry = MockConfigEntry(
         domain=DOMAIN,
         title="Fake Utility Co",
@@ -85,6 +85,26 @@ async def test_setup_api_error(hass):
         await hass.async_block_till_done()
 
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
+    assert not hass.data.get(DOMAIN)
+
+
+async def test_setup_not_authorized(hass, caplog):
+    """Test setting up entities with an invalid API key."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Fake Utility Co",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    with (
+        caplog.at_level(logging.ERROR),
+        patch("openeihttp.Rates.update", side_effect=NotAuthorized),
+    ):
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    assert "Invalid OpenEI API key." in caplog.text
     assert not hass.data.get(DOMAIN)
 
 
@@ -129,4 +149,4 @@ async def test_rate_limit_error(hass, mock_api_err, caplog):
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
-    assert "API Rate limit exceded, retrying later." in caplog.text
+    assert "API Rate limit exceeded, retrying later." in caplog.text
