@@ -1,0 +1,21 @@
+[tool.ruff]
+target-version = "py314"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "B",   # flake8-bugbear
+    "D",   # pydocstyle
+    "E",   # pycodestyle error
+    "F",   # pyflakes
+    "I",   # isort
+    "W",   # pycodestyle warning
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long
+    "D104",  # missing docstring in public package
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"

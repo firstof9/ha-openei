@@ -1,6 +1,6 @@
 """Sensor platform for integration_blueprint."""
 
-from typing import Any, Optional
+from typing import Any
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
@@ -75,7 +75,7 @@ class OpenEISensor(CoordinatorEntity, SensorEntity):
         return self.coordinator.last_update_success
 
     @property
-    def extra_state_attributes(self) -> Optional[dict]:
+    def extra_state_attributes(self) -> dict | None:
         """Return sesnsor attributes."""
         attrs = {}
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION

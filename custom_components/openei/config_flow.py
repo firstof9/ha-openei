@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import openeihttp
 import voluptuous as vol
@@ -172,8 +172,8 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 def _get_schema_step_1(
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
     if user_input is None:
@@ -201,8 +201,8 @@ def _get_schema_step_1(
 
 
 def _get_schema_step_2(
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
     utility_list: list,
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
@@ -224,8 +224,8 @@ def _get_schema_step_2(
 
 def _get_schema_step_3(
     hass: HomeAssistant,
-    user_input: Optional[Dict[str, Any]],
-    default_dict: Dict[str, Any],
+    user_input: dict[str, Any] | None,
+    default_dict: dict[str, Any],
     plan_list: list,
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
@@ -311,9 +311,9 @@ async def _lookup_plans(handler) -> list:
 def _get_entities(
     hass: HomeAssistant,
     domain: str,
-    search: List[str] = None,
-    extra_entities: List[str] = None,
-) -> List[str]:
+    search: list[str] = None,
+    extra_entities: list[str] = None,
+) -> list[str]:
     data = []
     if domain not in hass.data:
         return data
@@ -327,5 +327,5 @@ def _get_entities(
 
     if extra_entities:
         data.insert(0, extra_entities)
-    data.sort  # pylint: disable=pointless-statement
+    data.sort()
     return data

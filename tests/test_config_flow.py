@@ -1,6 +1,5 @@
 """Test OpenEI config flow."""
 
-import logging
 import re
 from unittest.mock import patch
 
@@ -68,21 +67,23 @@ async def test_form(
     assert result["errors"] == {}
     # assert result['title'] == title_1
 
-    with patch(
-        "custom_components.openei.async_setup", return_value=True
-    ) as mock_setup, patch(
-        "custom_components.openei.async_setup_entry",
-        return_value=True,
-    ) as mock_setup_entry, patch(
-        "custom_components.openei.config_flow._lookup_plans",
-        return_value={
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
-        },
-    ), patch(
-        "custom_components.openei.config_flow._get_entities",
-        return_value=["(none)"],
+    with (
+        patch("custom_components.openei.async_setup", return_value=True) as mock_setup,
+        patch(
+            "custom_components.openei.async_setup_entry",
+            return_value=True,
+        ) as mock_setup_entry,
+        patch(
+            "custom_components.openei.config_flow._lookup_plans",
+            return_value={
+                "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}]
+            },
+        ),
+        patch(
+            "custom_components.openei.config_flow._get_entities",
+            return_value=["(none)"],
+        ),
     ):
-
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"], input_1
         )
@@ -180,17 +181,22 @@ async def test_reconfig_form(
     assert reconfigure_result["type"] is FlowResultType.FORM
     assert reconfigure_result["step_id"] == step_id
 
-    with patch(
-        "custom_components.openei.config_flow._lookup_plans",
-        return_value={
-            "Fake Utility Co": [{"name": "Fake Plan Name", "label": "randomstring"}],
-            "New Fake Utility Co": [
-                {"name": "Fake Plan Name", "label": "new_randomstring"}
-            ],
-        },
-    ), patch(
-        "custom_components.openei.config_flow._get_entities",
-        return_value=["(none)"],
+    with (
+        patch(
+            "custom_components.openei.config_flow._lookup_plans",
+            return_value={
+                "Fake Utility Co": [
+                    {"name": "Fake Plan Name", "label": "randomstring"}
+                ],
+                "New Fake Utility Co": [
+                    {"name": "Fake Plan Name", "label": "new_randomstring"}
+                ],
+            },
+        ),
+        patch(
+            "custom_components.openei.config_flow._get_entities",
+            return_value=["(none)"],
+        ),
     ):
         result = await hass.config_entries.flow.async_configure(
             reconfigure_result["flow_id"], input_1
