@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
@@ -113,6 +114,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
             plan=plan,
             reading=reading,
             cache_file=cache_file,
+            session=async_get_clientsession(self.hass),
         )
         await rate.update()
 

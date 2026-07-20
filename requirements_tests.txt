@@ -5,6 +5,5 @@ pytest-homeassistant-custom-component
 tox
 ruff
 mypy
-aioresponses
 aiofiles
 prek

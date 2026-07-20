@@ -11,6 +11,7 @@ from homeassistant import config_entries
 from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_API_KEY,
@@ -271,7 +272,14 @@ async def _get_utility_list(hass, user_input) -> list | None:
         lon = hass.config.longitude
         address = None
 
-    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
+    plans = openeihttp.Rates(
+        api=api,
+        lat=lat,
+        lon=lon,
+        radius=radius,
+        address=address,
+        session=async_get_clientsession(hass),
+    )
     plans = await _lookup_plans(plans)
     utilities = list(plans.keys())
 
@@ -293,7 +301,14 @@ async def _get_plan_list(hass, user_input) -> list | None:
         lon = hass.config.longitude
         address = None
 
-    plans = openeihttp.Rates(api=api, lat=lat, lon=lon, radius=radius, address=address)
+    plans = openeihttp.Rates(
+        api=api,
+        lat=lat,
+        lon=lon,
+        radius=radius,
+        address=address,
+        session=async_get_clientsession(hass),
+    )
     plans = await _lookup_plans(plans)
     value = {}
 

@@ -1,28 +1,35 @@
-name: Release Drafter
+# SPDX-FileCopyrightText: 2026 Andrew Grimberg <tykeal@bardicgrove.org>
+# SPDX-License-Identifier: Apache-2.0
 
+name: 'Release Drafter'
+
+# yamllint disable-line rule:truthy
 on:
   push:
     branches:
       - master
-      - dev
-  pull_request_target:
-    # Only following types are handled by the action, but one can default to all as well
-    types: [opened, reopened, synchronize, edited]
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   update_release_draft:
-    runs-on: ubuntu-latest
+    name: 'Update Release Draft'
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 3
     steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+      # Harden the runner used by this workflow
+      # yamllint disable-line rule:line-length
+      - uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
         with:
-          egress-policy: audit
+          egress-policy: 'audit'
 
-      - uses: release-drafter/release-drafter@4d75298e00d9e34c483e5ff8c68d0ea1c1940c1e # v7.5.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # yamllint disable-line rule:line-length
+      - uses: release-drafter/release-drafter@139054aeaa9adc52ab36ddf67437541f039b88e2 # v7.1.1
