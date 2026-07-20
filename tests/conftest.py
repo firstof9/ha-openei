@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 import openeihttp
 import pytest
-from aioresponses import aioresponses
 
 from .common import load_fixture
 
@@ -36,10 +35,9 @@ def skip_notifications_fixture():
 
 
 @pytest.fixture
-def mock_aioclient():
+def mock_aioclient(aioclient_mock):
     """Fixture to mock aioclient calls."""
-    with aioresponses() as m:
-        yield m
+    return aioclient_mock
 
 
 @pytest.fixture(name="mock_api")
@@ -48,8 +46,7 @@ def mock_plandata(mock_aioclient):
     mock_aioclient.get(
         re.compile(TEST_PATTERN),
         status=200,
-        body=load_fixture("plan_data.json"),
-        repeat=True,
+        text=load_fixture("plan_data.json"),
     )
 
 
@@ -59,8 +56,7 @@ def mock_rate_limit(mock_aioclient):
     mock_aioclient.get(
         re.compile(TEST_PATTERN),
         status=200,
-        body=load_fixture("rate_limit.json"),
-        repeat=True,
+        text=load_fixture("rate_limit.json"),
     )
 
 
@@ -70,8 +66,7 @@ def mock_lookup(mock_aioclient):
     mock_aioclient.get(
         re.compile(TEST_PATTERN),
         status=200,
-        body=load_fixture("lookup.json"),
-        repeat=True,
+        text=load_fixture("lookup.json"),
     )
 
 

@@ -28,8 +28,7 @@ async def test_setup_entry(hass, mock_aioclient, caplog):
     mock_aioclient.get(
         re.compile(TEST_PATTERN),
         status=200,
-        body=load_fixture("plan_data.json"),
-        repeat=True,
+        text=load_fixture("plan_data.json"),
     )
 
     with caplog.at_level(logging.DEBUG):
