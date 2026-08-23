@@ -69,6 +69,9 @@ autolabeler:
   - label: "chore"
     title:
       - "/chore:/i"
+  - label: "breaking-change"
+    title:
+      - "/^[a-z]+(\\([^)]+\\))?!:/i"
   - label: "bugfix"
     title:
       - "/fix:/i"
@@ -81,12 +84,6 @@ autolabeler:
   - label: "code-quality"
     title:
       - "/tests:/i"
-  - label: "integration"
-    files:
-      - "custom_components/**/*"
-  - label: "tests"
-    files:
-      - "tests/**/*"
   - label: "ci"
     files:
       - ".github/workflows/**/*"
