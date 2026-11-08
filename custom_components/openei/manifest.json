@@ -1,6 +1,9 @@
 {
   "domain": "openei",
   "name": "OpenEI Utility Rates",
+  "categories": [
+    "energy.energy_prices"
+  ],
   "codeowners": ["@firstof9"],
   "config_flow": true,
   "dependencies": [],
