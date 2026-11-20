@@ -271,11 +271,11 @@ async def test_get_schema_step_3(hass):
     from custom_components.openei.config_flow import _get_schema_step_3
 
     # user_input is None
-    schema = _get_schema_step_3(hass, None, {}, ["Plan 1"])
+    schema = _get_schema_step_3(hass, None, {}, {"plan_1": "Plan 1"})
     assert schema is not None
 
     # CONF_SENSOR is '(none)' in default_dict
-    schema = _get_schema_step_3(hass, {}, {"sensor": "(none)"}, ["Plan 1"])
+    schema = _get_schema_step_3(hass, {}, {"sensor": "(none)"}, {"plan_1": "Plan 1"})
     assert schema is not None
 
 

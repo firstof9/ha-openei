@@ -40,11 +40,11 @@ async def test_unload_entry(hass, mock_api):
     await hass.async_block_till_done()
     assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 11
     assert len(hass.states.async_entity_ids(BINARY_SENSOR_DOMAIN)) == 1
-    assert len(hass.states.async_entity_ids(DOMAIN)) == 0
 
     assert await hass.config_entries.async_remove(entries[0].entry_id)
     await hass.async_block_till_done()
     assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 0
+    assert len(hass.states.async_entity_ids(BINARY_SENSOR_DOMAIN)) == 0
 
 
 @pytest.mark.parametrize(

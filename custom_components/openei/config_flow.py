@@ -40,6 +40,7 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._data: dict[str, Any] = {}
         self._errors: dict[str, str] = {}
         self._entry: config_entries.ConfigEntry | None = None
+        self._plans: dict[str, Any] | None = None
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Handle a flow initialized by the user."""
@@ -132,7 +133,8 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _show_step_2(self, step_id: str):
         """Show the step 2 configuration form."""
-        utility_list = await _get_utility_list(self.hass, self._data)
+        self._plans = await _async_lookup_plans(self.hass, self._data)
+        utility_list = list(self._plans.keys())
         _LOGGER.debug("Utility list: %s", utility_list)
         return self.async_show_form(
             step_id=step_id,
@@ -142,7 +144,10 @@ class OpenEIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _show_step_3(self, step_id: str):
         """Show the step 3 configuration form."""
-        plan_list = await _get_plan_list(self.hass, self._data)
+        assert self._plans is not None
+        utility = self._data[CONF_UTILITY]
+        plan_list = {plan["label"]: plan["name"] for plan in self._plans[utility]}
+        _LOGGER.debug("Plan list: %s", plan_list)
         return self.async_show_form(
             step_id=step_id,
             data_schema=_get_schema_step_3(self.hass, self._data, {}, plan_list),
@@ -215,7 +220,7 @@ def _get_schema_step_3(
     hass: HomeAssistant,
     user_input: dict[str, Any] | None,
     default_dict: dict[str, Any],
-    plan_list: dict | list,
+    plan_list: dict[str, str],
 ) -> vol.Schema:
     """Get a schema using the default_dict as a backup."""
     if user_input is None:
@@ -267,27 +272,6 @@ async def _async_lookup_plans(
         session=async_get_clientsession(hass),
     )
     return await _lookup_plans(rates)
-
-
-async def _get_utility_list(
-    hass: HomeAssistant, user_input: dict[str, Any]
-) -> list[str]:
-    """Return list of utilities by lat/lon."""
-    plans = await _async_lookup_plans(hass, user_input)
-    utilities = list(plans.keys())
-    _LOGGER.debug("get_utility_list: %s", utilities)
-    return utilities
-
-
-async def _get_plan_list(
-    hass: HomeAssistant, user_input: dict[str, Any]
-) -> dict[str, str]:
-    """Return dict of rate plans by lat/lon."""
-    plans = await _async_lookup_plans(hass, user_input)
-    utility = user_input[CONF_UTILITY]
-    value = {plan["label"]: plan["name"] for plan in plans[utility]}
-    _LOGGER.debug("get_plan_list: %s", value)
-    return value
 
 
 async def _lookup_plans(handler) -> dict[str, Any]:

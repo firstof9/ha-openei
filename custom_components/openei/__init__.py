@@ -71,7 +71,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         except AssertionError as exception:
             _LOGGER.debug("Data not yet available: %s", exception)
             return self.data or {}
-        except Exception as exception:
+        except Exception as exception:  # noqa: BLE001 — catch-all wrapped in UpdateFailed
             _LOGGER.debug("Unexpected exception: %s", exception)
             raise UpdateFailed(f"Unexpected error: {exception}") from exception
 
