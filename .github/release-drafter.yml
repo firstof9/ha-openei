@@ -52,6 +52,7 @@ categories:
         - "bug"
 
   - title: "🔧 Maintenance 🔧"
+    collapse-after: 3
     when:
       labels:
         - "chore"
@@ -62,6 +63,7 @@ categories:
         - "code-quality"
 
   - title: "🔩 Dependency 🔩"
+    collapse-after: 3
     when:
       labels:
         - "dependencies"
