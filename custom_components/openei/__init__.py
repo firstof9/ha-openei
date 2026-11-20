@@ -71,7 +71,7 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
         except AssertionError as exception:
             _LOGGER.debug("Data not yet available: %s", exception)
             return self.data or {}
-        except Exception as exception:
+        except Exception as exception:  # noqa: BLE001 — catch-all wrapped in UpdateFailed
             _LOGGER.debug("Unexpected exception: %s", exception)
             raise UpdateFailed(f"Unexpected error: {exception}") from exception
 
@@ -120,27 +120,26 @@ class OpenEIDataUpdateCoordinator(DataUpdateCoordinator):
 
         data = {}
 
-        for sensor in SENSOR_TYPES:  # pylint: disable=consider-using-dict-items
-            _sensor: dict = {}
-            if sensor == "all_rates":
+        for description in SENSOR_TYPES:
+            key = description.key
+            if key == "all_rates":
                 value = rate.all_rates
                 if value is not None:
-                    _sensor["all_rates"] = value[0]
-                    _sensor["all_adjustments"] = value[1]
+                    data["all_rates"] = value[0]
+                    data["all_adjustments"] = value[1]
                 else:
-                    _sensor["all_rates"] = None
-                    _sensor["all_adjustments"] = None
+                    data["all_rates"] = None
+                    data["all_adjustments"] = None
             else:
-                value = getattr(rate, SENSOR_TYPES[sensor].key)
+                value = getattr(rate, key)
                 if isinstance(value, tuple):
-                    _sensor[sensor] = value[0]
-                    _sensor[f"{sensor}_uom"] = value[1]
+                    data[key] = value[0]
+                    data[f"{key}_uom"] = value[1]
                 else:
-                    _sensor[sensor] = value
-            data.update(_sensor)
+                    data[key] = value
 
-        for sensor in BINARY_SENSORS:  # pylint: disable=consider-using-dict-items
-            data[sensor] = getattr(rate, sensor)
+        for description in BINARY_SENSORS:
+            data[description.key] = getattr(rate, description.key)
 
         _LOGGER.debug("DEBUG: %s", data)
         return data

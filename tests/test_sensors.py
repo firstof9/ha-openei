@@ -3,10 +3,8 @@
 import logging
 
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.openei.const import DOMAIN
-from tests.const import CONFIG_DATA
+from tests.common import setup_integration
 
 FAKE_MINCHARGE_SENSOR = "sensor.openei_fake_utility_co_minimum_charge"
 FAKE_FIXEDCHARGE_SENSOR = "sensor.openei_fake_utility_co_fixed_charge_first_meter"
@@ -24,16 +22,10 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_sensors(hass, mock_api, caplog):
-    """Test settting up entities."""
-    entry = MockConfigEntry(
-        domain=DOMAIN,
-        title="Fake Utility Co",
-        data=CONFIG_DATA,
-    )
+    """Test setting up entities."""
     with caplog.at_level(logging.DEBUG):
-        entry.add_to_hass(hass)
-        assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        _, result = await setup_integration(hass)
+        assert result
 
         state = hass.states.get(FAKE_MINCHARGE_SENSOR)
         assert state is not None
