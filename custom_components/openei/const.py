@@ -26,77 +26,77 @@ CONF_SENSOR = "sensor"
 CONF_UTILITY = "utility"
 
 # property: name, icon, unit_of_measurement, device_class
-SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
-    "current_rate": SensorEntityDescription(
+SENSOR_TYPES: Final[tuple[SensorEntityDescription, ...]] = (
+    SensorEntityDescription(
         key="current_rate",
         name="Current Energy Rate",
         icon="mdi:cash-multiple",
     ),
-    "current_adjustment": SensorEntityDescription(
+    SensorEntityDescription(
         key="current_adjustment",
         name="Current Energy Adjustment",
         icon="mdi:cash-multiple",
     ),
-    "distributed_generation": SensorEntityDescription(
+    SensorEntityDescription(
         key="distributed_generation",
         name="Distributed Generation",
         icon="mdi:gauge",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "rate_name": SensorEntityDescription(
+    SensorEntityDescription(
         key="rate_name",
         name="Plan Name",
         icon="mdi:tag",
     ),
-    "current_energy_rate_structure": SensorEntityDescription(
+    SensorEntityDescription(
         key="current_energy_rate_structure",
         name="Current Energy Rate Structure",
         icon="mdi:tag",
     ),
-    "next_energy_rate_structure": SensorEntityDescription(
+    SensorEntityDescription(
         key="next_energy_rate_structure",
         name="Next Energy Rate Structure",
         icon="mdi:tag",
     ),
-    "next_energy_rate_structure_time": SensorEntityDescription(
+    SensorEntityDescription(
         key="next_energy_rate_structure_time",
         name="Next Energy Rate Structure Time",
         icon="mdi:clock-outline",
     ),
-    "all_rates": SensorEntityDescription(
+    SensorEntityDescription(
         key="all_rates",
         name="All Listed Rates",
         icon="mdi:format-list-bulleted",
     ),
-    "monthly_tier_rate": SensorEntityDescription(
+    SensorEntityDescription(
         key="monthly_tier_rate",
         name="Monthly Energy Rate",
         icon="mdi:cash-multiple",
     ),
-    "mincharge": SensorEntityDescription(
+    SensorEntityDescription(
         key="mincharge",
         name="Minimum Charge",
         icon="mdi:cash-multiple",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "fixedchargefirstmeter": SensorEntityDescription(
+    SensorEntityDescription(
         key="fixedchargefirstmeter",
         name="Fixed Charge (first meter)",
         icon="mdi:cash-multiple",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "current_sell_rate": SensorEntityDescription(
+    SensorEntityDescription(
         key="current_sell_rate",
         name="Current Energy Sell Rate",
         icon="mdi:cash-multiple",
     ),
-}
+)
 
-BINARY_SENSORS: Final[dict[str, BinarySensorEntityDescription]] = {
-    "approval": BinarySensorEntityDescription(
+BINARY_SENSORS: Final[tuple[BinarySensorEntityDescription, ...]] = (
+    BinarySensorEntityDescription(
         name="Approval",
         key="approval",
         icon="mdi:check",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-}
+)

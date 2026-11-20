@@ -3,14 +3,22 @@
 import re
 from unittest.mock import patch
 
-import openeihttp
 import pytest
 
-from .common import load_fixture
+from .common import load_fixture, make_config_entry
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 
 TEST_PATTERN = r"^https://api\.openei\.org/utility_rates\?.*$"
+
+
+def _mock_api_response(mock_aioclient, fixture_name: str) -> None:
+    """Register a mocked OpenEI API response from a fixture file."""
+    mock_aioclient.get(
+        re.compile(TEST_PATTERN),
+        status=200,
+        text=load_fixture(fixture_name),
+    )
 
 
 # This fixture enables loading custom integrations in all tests.
@@ -43,58 +51,16 @@ def mock_aioclient(aioclient_mock):
 @pytest.fixture(name="mock_api")
 def mock_plandata(mock_aioclient):
     """Mock the status reply."""
-    mock_aioclient.get(
-        re.compile(TEST_PATTERN),
-        status=200,
-        text=load_fixture("plan_data.json"),
-    )
+    _mock_api_response(mock_aioclient, "plan_data.json")
 
 
 @pytest.fixture(name="mock_api_err")
 def mock_rate_limit(mock_aioclient):
-    """Mock the status reply."""
-    mock_aioclient.get(
-        re.compile(TEST_PATTERN),
-        status=200,
-        text=load_fixture("rate_limit.json"),
-    )
+    """Mock the rate limit reply."""
+    _mock_api_response(mock_aioclient, "rate_limit.json")
 
 
-@pytest.fixture(name="mock_api_config")
-def mock_lookup(mock_aioclient):
-    """Mock the status reply."""
-    mock_aioclient.get(
-        re.compile(TEST_PATTERN),
-        status=200,
-        text=load_fixture("lookup.json"),
-    )
-
-
-@pytest.fixture(name="mock_sensors")
-def mock_get_sensors():
-    """Mock of get sensors function."""
-    with patch(
-        "custom_components.openei.OpenEIDataUpdateCoordinator._get_sensors",
-        autospec=True,
-    ) as mock_sensors:
-        mock_sensors.return_value = {
-            "current_rate": 0.24477,
-            "distributed_generation": "Net Metering",
-            "approval": True,
-            "rate_name": "Fake Test Rate",
-            "mincharge": 10,
-            "mincharge_uom": "$/month",
-            "all_rates": [0.24477, 0.007],
-            "all_adjustments": [0.02824917, 0.0],
-        }
-        yield mock_sensors
-
-
-@pytest.fixture(name="mock_sensors_err")
-def mock_sensors_api_error():
-    """Mock of get sensors function."""
-    with patch(
-        "custom_components.openei.OpenEIDataUpdateCoordinator._get_sensors"
-    ) as mock_sensors:
-        mock_sensors.side_effect = openeihttp.RateLimit("Error")
-        yield mock_sensors
+@pytest.fixture
+def mock_config_entry():
+    """Return a default MockConfigEntry for OpenEI."""
+    return make_config_entry()

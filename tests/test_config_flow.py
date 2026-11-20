@@ -1,19 +1,15 @@
 """Test OpenEI config flow."""
 
-import re
 from unittest.mock import patch
 
 import pytest
 from homeassistant import config_entries, setup
 from homeassistant.data_entry_flow import FlowResultType
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.openei.const import DOMAIN
-from tests.common import load_fixture
-from tests.const import CONFIG_DATA
+from tests.common import setup_integration
 
 pytestmark = pytest.mark.asyncio
-TEST_PATTERN = r"^https://api\.openei\.org/utility_rates\?.*$"
 
 
 @pytest.mark.parametrize(
@@ -65,7 +61,6 @@ async def test_form(
     )
     assert result["type"] == "form"
     assert result["errors"] == {}
-    # assert result['title'] == title_1
 
     with (
         patch(
@@ -149,24 +144,11 @@ async def test_reconfig_form(
     title,
     data,
     hass,
-    mock_aioclient,
+    mock_api,
 ):
-    """Test we get the form."""
+    """Test we get the reconfigure form."""
     await setup.async_setup_component(hass, "persistent_notification", {})
-    entry = MockConfigEntry(
-        domain=DOMAIN,
-        title="Fake Utility Co",
-        data=CONFIG_DATA,
-    )
-    mock_aioclient.get(
-        re.compile(TEST_PATTERN),
-        status=200,
-        text=load_fixture("plan_data.json"),
-    )
-
-    entry.add_to_hass(hass)
-    await hass.config_entries.async_setup(entry.entry_id)
-    await hass.async_block_till_done()
+    entry, _ = await setup_integration(hass)
 
     reconfigure_result = await hass.config_entries.flow.async_init(
         DOMAIN,
