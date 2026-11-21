@@ -1,6 +1,6 @@
 {
     "name": "OpenEI",
-    "homeassistant": "2021.8.0",
+    "homeassistant": "2026.3.0",
     "zip_release": true,
     "filename": "openei.zip"
 }
